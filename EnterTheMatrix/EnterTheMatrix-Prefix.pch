@@ -1,0 +1,19 @@
+//
+// Prefix header for all source files of the 'EnterTheMatrix' target in the 'EnterTheMatrix' project
+//
+
+#import <Availability.h>
+#include <math.h>
+#import "Enumerations.h"
+
+static inline double radians (double degrees) {return degrees * M_PI/180;}
+static inline double degrees (double radians) {return radians * 180/M_PI;}
+
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iOS SDK 5.0 and later."
+#endif
+
+#ifdef __OBJC__
+	#import <UIKit/UIKit.h>
+	#import <Foundation/Foundation.h>
+#endif
