@@ -664,7 +664,7 @@ www.glyphish.com</string>
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="3041" y="150"/>
+            <point key="canvasLocation" x="3042" y="1310"/>
         </scene>
         <!--Transform Controller - CATransform3D-->
         <scene sceneID="13">
@@ -721,7 +721,7 @@ www.glyphish.com</string>
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="3042" y="1284"/>
+            <point key="canvasLocation" x="3041" y="2470"/>
         </scene>
         <!--Keyframe View Controller - Keyframe Animation-->
         <scene sceneID="IDq-Tw-M4f">
@@ -1154,32 +1154,32 @@ www.glyphish.com</string>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" id="GgO-1P-2Jd">
-                                        <rect key="frame" x="438" y="10" width="320" height="144"/>
+                                        <rect key="frame" x="438" y="20" width="310" height="144"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <slider opaque="NO" tag="103" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="16" minValue="4" maxValue="64" id="Acb-cj-y0v">
-                                                <rect key="frame" x="80" y="41" width="160" height="23"/>
+                                                <rect key="frame" x="80" y="41" width="150" height="23"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                 <connections>
                                                     <action selector="translateVertChanged:" destination="3Vb-Ho-NJi" eventType="valueChanged" id="5Ek-Cf-4ag"/>
                                                 </connections>
                                             </slider>
                                             <slider opaque="NO" tag="104" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="2" id="04S-qi-1b8">
-                                                <rect key="frame" x="80" y="76" width="160" height="23"/>
+                                                <rect key="frame" x="80" y="76" width="150" height="23"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                 <connections>
                                                     <action selector="scaleVertChanged:" destination="3Vb-Ho-NJi" eventType="valueChanged" id="oV0-5K-31H"/>
                                                 </connections>
                                             </slider>
                                             <slider opaque="NO" tag="105" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-10" maxValue="10" id="dAB-8s-I2q">
-                                                <rect key="frame" x="80" y="111" width="160" height="23"/>
+                                                <rect key="frame" x="80" y="111" width="150" height="23"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                 <connections>
                                                     <action selector="rotateVertChanged:" destination="3Vb-Ho-NJi" eventType="valueChanged" id="a5G-f1-2XY"/>
                                                 </connections>
                                             </slider>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Vertical Grid Lines" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="1J4-p2-Xzx">
-                                                <rect key="frame" x="91" y="10" width="139" height="21"/>
+                                                <rect key="frame" x="91" y="10" width="129" height="21"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -1207,21 +1207,21 @@ www.glyphish.com</string>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="203" contentMode="left" text="16" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="28G-zj-KUi">
-                                                <rect key="frame" x="250" y="41" width="60" height="18"/>
+                                                <rect key="frame" x="240" y="41" width="60" height="18"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="204" contentMode="left" text="1.000" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="hMA-Qp-iqE">
-                                                <rect key="frame" x="250" y="76" width="60" height="18"/>
+                                                <rect key="frame" x="240" y="76" width="60" height="18"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="205" contentMode="left" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="YE7-NV-2oS">
-                                                <rect key="frame" x="250" y="111" width="60" height="18"/>
+                                                <rect key="frame" x="240" y="111" width="60" height="18"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -1230,11 +1230,12 @@ www.glyphish.com</string>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="0.75" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                     </view>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Vo7-QT-5qB">
-                                        <rect key="frame" x="348" y="117" width="72" height="37"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Vo7-QT-5qB">
+                                        <rect key="frame" x="362" y="103" width="44" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="0.75" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                        <state key="normal" title="Reset">
+                                        <state key="normal" image="Refresh.png">
                                             <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -1246,8 +1247,9 @@ www.glyphish.com</string>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="MSx-Tc-f1F">
-                                        <rect key="frame" x="362" y="44" width="44" height="37"/>
+                                        <rect key="frame" x="362" y="37" width="44" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="0.75" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" image="Lock.png">
                                             <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
@@ -1264,32 +1266,32 @@ www.glyphish.com</string>
                                 <color key="backgroundColor" red="0.40000000596046448" green="0.40000000596046448" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                             <view contentMode="scaleToFill" id="Yh4-ep-4ht">
-                                <rect key="frame" x="10" y="13" width="320" height="144"/>
+                                <rect key="frame" x="20" y="20" width="310" height="144"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <slider opaque="NO" tag="100" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="16" minValue="4" maxValue="64" id="AEU-Qj-FQ8">
-                                        <rect key="frame" x="80" y="41" width="160" height="23"/>
+                                        <rect key="frame" x="80" y="41" width="150" height="23"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                         <connections>
                                             <action selector="translateHorzChanged:" destination="3Vb-Ho-NJi" eventType="valueChanged" id="8WC-lE-yhr"/>
                                         </connections>
                                     </slider>
                                     <slider opaque="NO" tag="101" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="2" id="Bmf-1L-6dt">
-                                        <rect key="frame" x="80" y="76" width="160" height="23"/>
+                                        <rect key="frame" x="80" y="76" width="150" height="23"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                         <connections>
                                             <action selector="scaleHorzChanged:" destination="3Vb-Ho-NJi" eventType="valueChanged" id="ZVJ-fV-uY7"/>
                                         </connections>
                                     </slider>
                                     <slider opaque="NO" tag="102" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-10" maxValue="10" id="Mcr-qY-U4j">
-                                        <rect key="frame" x="80" y="111" width="160" height="23"/>
+                                        <rect key="frame" x="80" y="111" width="150" height="23"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                         <connections>
                                             <action selector="rotateHorzChanged:" destination="3Vb-Ho-NJi" eventType="valueChanged" id="QyP-kc-oF0"/>
                                         </connections>
                                     </slider>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Horizontal Grid Lines" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="D5x-dP-aYM">
-                                        <rect key="frame" x="70" y="10" width="180" height="21"/>
+                                        <rect key="frame" x="70" y="10" width="170" height="21"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -1317,21 +1319,21 @@ www.glyphish.com</string>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="200" contentMode="left" text="16" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="AfT-wu-OLO">
-                                        <rect key="frame" x="250" y="41" width="60" height="18"/>
+                                        <rect key="frame" x="240" y="41" width="60" height="18"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="201" contentMode="left" text="1.000" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="thG-KU-1RQ">
-                                        <rect key="frame" x="250" y="76" width="60" height="18"/>
+                                        <rect key="frame" x="240" y="76" width="60" height="18"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="202" contentMode="left" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="da6-sX-O90">
-                                        <rect key="frame" x="250" y="111" width="60" height="18"/>
+                                        <rect key="frame" x="240" y="111" width="60" height="18"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -1346,10 +1348,14 @@ www.glyphish.com</string>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="grid" destination="de6-dd-lAK" id="hUt-Qf-e6e"/>
+                        <outlet property="horizontalPanel" destination="Yh4-ep-4ht" id="O0M-pW-UgJ"/>
+                        <outlet property="lockButton" destination="MSx-Tc-f1F" id="N5B-yR-Nt4"/>
+                        <outlet property="resetButton" destination="Vo7-QT-5qB" id="n8H-mt-5zX"/>
+                        <outlet property="verticalPanel" destination="GgO-1P-2Jd" id="HhN-1Z-ChO"/>
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="3042" y="2464"/>
+            <point key="canvasLocation" x="3042" y="174"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="15">
@@ -1363,13 +1369,13 @@ www.glyphish.com</string>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="2" kind="relationship" relationship="viewControllers" id="27"/>
-                        <segue destination="3" kind="relationship" relationship="viewControllers" id="28"/>
-                        <segue destination="3Vb-Ho-NJi" kind="relationship" relationship="viewControllers" id="q9a-pl-t4v"/>
-                        <segue destination="MsB-0F-weF" kind="relationship" relationship="viewControllers" id="abt-U2-FBL"/>
-                        <segue destination="KTs-67-LLj" kind="relationship" relationship="viewControllers" id="evN-3K-j8F"/>
-                        <segue destination="ueP-0g-58F" kind="relationship" relationship="viewControllers" id="aTl-HV-etv"/>
-                        <segue destination="9yv-Nw-WmJ" kind="relationship" relationship="viewControllers" id="dz8-ih-Wsq"/>
+                        <segue destination="3Vb-Ho-NJi" kind="relationship" relationship="viewControllers" id="J7N-ac-ORM"/>
+                        <segue destination="2" kind="relationship" relationship="viewControllers" id="Sb5-s4-Efc"/>
+                        <segue destination="3" kind="relationship" relationship="viewControllers" id="dGm-U1-Fw8"/>
+                        <segue destination="MsB-0F-weF" kind="relationship" relationship="viewControllers" id="sWX-lV-Jgk"/>
+                        <segue destination="KTs-67-LLj" kind="relationship" relationship="viewControllers" id="KUM-Is-OzD"/>
+                        <segue destination="ueP-0g-58F" kind="relationship" relationship="viewControllers" id="9C3-fV-YTZ"/>
+                        <segue destination="9yv-Nw-WmJ" kind="relationship" relationship="viewControllers" id="FGb-Ke-Gp4"/>
                     </connections>
                 </tabBarController>
             </objects>
@@ -1385,127 +1391,12 @@ www.glyphish.com</string>
         <image name="Key.png" width="26" height="26"/>
         <image name="Lock.png" width="20" height="24"/>
         <image name="PaperAirplane.png" width="26" height="23"/>
+        <image name="Refresh.png" width="16" height="16"/>
         <image name="Sketchbook.png" width="34" height="25"/>
         <image name="Sword.png" width="28" height="23"/>
         <image name="matrix_01.png" width="480" height="360"/>
         <image name="matrix_02.png" width="480" height="360"/>
     </resources>
-    <classes>
-        <class className="Arc" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/Arc.h"/>
-        </class>
-        <class className="BasicAnimationViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/BasicAnimationViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="animationChanged:"/>
-                <relationship kind="action" name="goPressed:"/>
-                <relationship kind="outlet" name="bar" candidateClass="UIView"/>
-                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
-                <relationship kind="outlet" name="modeSegment" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="rotateLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="rotateSwitch" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="scaleLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="scaleSwitch" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="speedSwitch" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="translateLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="translateSwitch" candidateClass="UISwitch"/>
-            </relationships>
-        </class>
-        <class className="CATransformController" superclassName="TransformController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/CATransformController.h"/>
-        </class>
-        <class className="CGAffineController" superclassName="TransformController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/CGAffineController.h"/>
-        </class>
-        <class className="FlipViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlipViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="skewValueChanged:"/>
-                <relationship kind="outlet" name="contentView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
-                <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="skewLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="skewSlider" candidateClass="UISlider"/>
-                <relationship kind="outlet" name="speedSwitch" candidateClass="UISwitch"/>
-            </relationships>
-        </class>
-        <class className="FoldViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FoldViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="bottomBar" candidateClass="UIView"/>
-                <relationship kind="outlet" name="centerBar" candidateClass="UIView"/>
-                <relationship kind="outlet" name="contentView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
-                <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
-                <relationship kind="outlet" name="skewSegment" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="topBar" candidateClass="UIView"/>
-            </relationships>
-        </class>
-        <class className="GridView" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/GridView.h"/>
-        </class>
-        <class className="GridViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/GridViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="lockPressed:"/>
-                <relationship kind="action" name="resetPressed:"/>
-                <relationship kind="action" name="rotateHorzChanged:"/>
-                <relationship kind="action" name="rotateVertChanged:"/>
-                <relationship kind="action" name="scaleHorzChanged:"/>
-                <relationship kind="action" name="scaleVertChanged:"/>
-                <relationship kind="action" name="translateHorzChanged:"/>
-                <relationship kind="action" name="translateVertChanged:"/>
-                <relationship kind="outlet" name="grid" candidateClass="GridView"/>
-            </relationships>
-        </class>
-        <class className="InfoView" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/InfoView.h"/>
-            <relationships>
-                <relationship kind="outlet" name="label" candidateClass="UITextView"/>
-            </relationships>
-        </class>
-        <class className="KeyframeViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/KeyframeViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="arcPositionValueChanged:"/>
-                <relationship kind="outlet" name="arc" candidateClass="Arc"/>
-                <relationship kind="outlet" name="arcPositionSegment" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="bottomLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
-                <relationship kind="outlet" name="modeSegment" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="speedSwitch" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="topLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-        <class className="TransformController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TransformController.h"/>
-            <relationships>
-                <relationship kind="action" name="infoPressed:"/>
-                <relationship kind="action" name="resetPressed:"/>
-                <relationship kind="action" name="transformPressed:"/>
-                <relationship kind="outlet" name="contentView" candidateClass="UIView"/>
-            </relationships>
-        </class>
-        <class className="TransformTable" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TransformTable.h"/>
-            <relationships>
-                <relationship kind="action" name="resetRotationPressed:"/>
-                <relationship kind="action" name="resetScalePressed:"/>
-                <relationship kind="action" name="resetTranslatePressed:"/>
-                <relationship kind="action" name="rotateXChanged:"/>
-                <relationship kind="action" name="rotateYChanged:"/>
-                <relationship kind="action" name="rotateZChanged:"/>
-                <relationship kind="action" name="rotationAngleChanged:"/>
-                <relationship kind="action" name="scaleLockPressed:"/>
-                <relationship kind="action" name="scaleXChanged:"/>
-                <relationship kind="action" name="scaleYChanged:"/>
-                <relationship kind="action" name="scaleZChanged:"/>
-                <relationship kind="action" name="translateXChanged:"/>
-                <relationship kind="action" name="translateYChanged:"/>
-                <relationship kind="action" name="translateZChanged:"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

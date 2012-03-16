@@ -21,8 +21,8 @@
 - (void)doInit
 {
 	lineColor = [UIColor whiteColor];
-	translateHorz = 16;
-	translateVert = 16;
+	translateHorz = 32;
+	translateVert = 32;
 	scaleHorz = 1;
 	scaleVert = 1;
 	rotateHorz = 0;

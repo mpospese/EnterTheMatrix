@@ -37,6 +37,8 @@
 		4D6E91E81511F47900B7D1D1 /* matrix_04@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D6E91E61511F47900B7D1D1 /* matrix_04@2x.png */; };
 		4D6E91E91511F47900B7D1D1 /* matrix_03@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D6E91E71511F47900B7D1D1 /* matrix_03@2x.png */; };
 		4D6E91F01511FCEE00B7D1D1 /* Blueprint - iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D6E91EF1511FCEE00B7D1D1 /* Blueprint - iPad.png */; };
+		4D74961F151405CF00E6B879 /* Refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D74961D151405CF00E6B879 /* Refresh.png */; };
+		4D7496251514077600E6B879 /* Refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D7496241514077600E6B879 /* Refresh@2x.png */; };
 		4D996D4D1508D37F00F8F186 /* BasicAnimationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D996D4C1508D37F00F8F186 /* BasicAnimationViewController.m */; };
 		4D996D511509010300F8F186 /* Ghost.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D996D4F1509010300F8F186 /* Ghost.png */; };
 		4D996D521509010300F8F186 /* Ghost@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D996D501509010300F8F186 /* Ghost@2x.png */; };
@@ -103,6 +105,8 @@
 		4D6E91E61511F47900B7D1D1 /* matrix_04@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "matrix_04@2x.png"; sourceTree = "<group>"; };
 		4D6E91E71511F47900B7D1D1 /* matrix_03@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "matrix_03@2x.png"; sourceTree = "<group>"; };
 		4D6E91EF1511FCEE00B7D1D1 /* Blueprint - iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Blueprint - iPad.png"; sourceTree = "<group>"; };
+		4D74961D151405CF00E6B879 /* Refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Refresh.png; sourceTree = "<group>"; };
+		4D7496241514077600E6B879 /* Refresh@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Refresh@2x.png"; sourceTree = "<group>"; };
 		4D996D4B1508D37F00F8F186 /* BasicAnimationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicAnimationViewController.h; sourceTree = "<group>"; };
 		4D996D4C1508D37F00F8F186 /* BasicAnimationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BasicAnimationViewController.m; sourceTree = "<group>"; };
 		4D996D4F1509010300F8F186 /* Ghost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Ghost.png; sourceTree = "<group>"; };
@@ -256,6 +260,8 @@
 				4DBE7B7F14FD16DE008174E8 /* Lock@2x.png */,
 				4DBE7B8414FD19E7008174E8 /* Unlock.png */,
 				4DBE7B8514FD19E7008174E8 /* Unlock@2x.png */,
+				4D74961D151405CF00E6B879 /* Refresh.png */,
+				4D7496241514077600E6B879 /* Refresh@2x.png */,
 				4DE4181714FDB6930007800B /* Bacon.png */,
 				4DE4181814FDB6930007800B /* Bacon@2x.png */,
 				4DE4182014FE3C520007800B /* Info.png */,
@@ -371,6 +377,8 @@
 				4D6E91E81511F47900B7D1D1 /* matrix_04@2x.png in Resources */,
 				4D6E91E91511F47900B7D1D1 /* matrix_03@2x.png in Resources */,
 				4D6E91F01511FCEE00B7D1D1 /* Blueprint - iPad.png in Resources */,
+				4D74961F151405CF00E6B879 /* Refresh.png in Resources */,
+				4D7496251514077600E6B879 /* Refresh@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

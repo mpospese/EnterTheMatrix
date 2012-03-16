@@ -14,6 +14,10 @@
 
 @implementation GridViewController
 @synthesize grid;
+@synthesize horizontalPanel;
+@synthesize verticalPanel;
+@synthesize lockButton;
+@synthesize resetButton;
 @synthesize locked;
 
 - (void)doInit
@@ -51,26 +55,42 @@
     return self;	
 }
 
+- (void)addDropShadowToView:(UIView *)view
+{
+	view.layer.cornerRadius = 5;
+	view.layer.shadowOpacity = 0.5;
+	view.layer.shadowOffset = CGSizeMake(0, 3);
+	[self setShadowPathOnView:view];
+}
+
+- (void)setShadowPathOnView:(UIView *)view
+{
+	[[view layer] setShadowPath:[[UIBezierPath bezierPathWithRoundedRect:[view bounds] cornerRadius:5] CGPath]];	
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+	[self addDropShadowToView:self.horizontalPanel];
+	[self addDropShadowToView:self.verticalPanel];
+	[self addDropShadowToView:self.lockButton];
+	[self addDropShadowToView:self.resetButton];
 }
 
 - (void)viewDidUnload
 {
 	[self setGrid:nil];
+    [self setHorizontalPanel:nil];
+    [self setVerticalPanel:nil];
+	[self setLockButton:nil];
+	[self setResetButton:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-	if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-	    return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
-	} else {
-	    return YES;
-	}
+	return YES;
 }
 
 - (IBAction)translateHorzChanged:(id)sender {

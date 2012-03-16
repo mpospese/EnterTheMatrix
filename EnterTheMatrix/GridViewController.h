@@ -12,6 +12,10 @@
 @interface GridViewController : UIViewController
 
 @property (weak, nonatomic) IBOutlet GridView *grid;
+@property (weak, nonatomic) IBOutlet UIView *horizontalPanel;
+@property (weak, nonatomic) IBOutlet UIView *verticalPanel;
+@property (weak, nonatomic) IBOutlet UIButton *lockButton;
+@property (weak, nonatomic) IBOutlet UIButton *resetButton;
 @property (assign, nonatomic, getter = isLocked) BOOL locked;
 
 - (IBAction)translateHorzChanged:(id)sender;
