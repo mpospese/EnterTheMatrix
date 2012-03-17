@@ -8,6 +8,8 @@
 
 #import "GridView.h"
 
+#define DEFAULT_TRANSLATION_GAP	32
+
 @implementation GridView
 
 @synthesize lineColor;
@@ -21,8 +23,8 @@
 - (void)doInit
 {
 	lineColor = [UIColor whiteColor];
-	translateHorz = 32;
-	translateVert = 32;
+	translateHorz = DEFAULT_TRANSLATION_GAP;
+	translateVert = DEFAULT_TRANSLATION_GAP;
 	scaleHorz = 1;
 	scaleVert = 1;
 	rotateHorz = 0;
@@ -179,8 +181,8 @@
 
 - (void)reset
 {
-	[self setTranslateHorz:16];
-	[self setTranslateVert:16];
+	[self setTranslateHorz:DEFAULT_TRANSLATION_GAP];
+	[self setTranslateVert:DEFAULT_TRANSLATION_GAP];
 	[self setScaleHorz:1];
 	[self setScaleVert:1];
 	[self setRotateHorz:0];

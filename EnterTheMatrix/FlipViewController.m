@@ -463,12 +463,13 @@
 	else 
 		half2Rect.origin.x = half1Rect.size.width;
 	
-	self.pageFront = [[UIImageView alloc] initWithImage:[MPAnimation renderImageFromView:self.contentView withRect:isForward? half2Rect : half1Rect]];
-	self.pageFacing = [[UIImageView alloc] initWithImage:[MPAnimation renderImageFromView:self.contentView withRect:isForward? half1Rect : half2Rect]];
+	UIEdgeInsets insets = UIEdgeInsetsMake(isVertical? 0 : 1, isVertical? 1 : 0, isVertical? 0 : 1, isVertical? 1 : 0);
+	self.pageFront = [[UIImageView alloc] initWithImage:[MPAnimation renderImageForAntialiasing: [MPAnimation renderImageFromView:self.contentView withRect:isForward? half2Rect : half1Rect] withInsets:insets]];
+	self.pageFacing = [[UIImageView alloc] initWithImage:[MPAnimation renderImageForAntialiasing: [MPAnimation renderImageFromView:self.contentView withRect:isForward? half1Rect : half2Rect] withInsets:insets]];
 	
 	self.imageView.image = next;
 	
-	self.pageBack = [[UIImageView alloc] initWithImage:[MPAnimation renderImageFromView:self.contentView withRect:isForward? half1Rect : half2Rect]];
+	self.pageBack = [[UIImageView alloc] initWithImage:[MPAnimation renderImageForAntialiasing: [MPAnimation renderImageFromView:self.contentView withRect:isForward? half1Rect : half2Rect] withInsets:insets]];
 	self.pageBack.hidden = YES;
 	
 	half1Rect = [self.view convertRect:half1Rect fromView:self.contentView];
@@ -476,6 +477,11 @@
 	
 	half1Rect = CGRectOffset(half1Rect, isVertical? 0 : half1Rect.size.width/2, isVertical? half1Rect.size.height/2 : 0);
 	half2Rect = CGRectOffset(half2Rect, isVertical? 0 : -half1Rect.size.width/2, isVertical? -half1Rect.size.height/2 : 0);
+
+	// account for 1-pixel clear margin we introduced for anti-aliasing
+	half1Rect = CGRectInset(half1Rect, -insets.left, -insets.top);
+	half2Rect = CGRectInset(half2Rect, -insets.left, -insets.top);
+	
 	self.pageFront.frame = isForward? half2Rect : half1Rect;
 	self.pageBack.frame = isForward? half1Rect : half2Rect;
 	self.pageFacing.frame = isForward? half1Rect : half2Rect;
@@ -493,11 +499,11 @@
 	self.pageFront.layer.shadowOpacity = 0.5;
 	self.pageFront.layer.shadowRadius = 1;
 	self.pageFront.layer.shadowOffset = isVertical? CGSizeMake(0, isForward? 1 : -1) : CGSizeMake(isForward? 1 : -1, 0);
-	[[self.pageFront layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.pageFront bounds]] CGPath]];	
+	[[self.pageFront layer] setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.pageFront bounds], insets.left, insets.top)] CGPath]];	
 	self.pageBack.layer.shadowOpacity = 0.5;
 	self.pageBack.layer.shadowRadius = 1;
 	self.pageBack.layer.shadowOffset = isVertical? CGSizeMake(0, isForward? -1 : 1) : CGSizeMake(isForward? -1 : 1, 0);
-	[[self.pageBack layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.pageBack bounds]] CGPath]];	
+	[[self.pageBack layer] setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.pageBack bounds], insets.left, insets.top)] CGPath]];	
 
 	// set the back page in the vertical position (midpoint of animation)
 	[self doFlip2:0];

@@ -22,4 +22,9 @@
 	return YES;
 }
 
+- (NSString *)imageName
+{
+	return @"matrix_01";
+}
+
 @end

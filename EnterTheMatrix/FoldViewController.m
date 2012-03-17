@@ -68,9 +68,14 @@
 	bottomRect.origin.y = topRect.size.height;
 	
 	// paint the images from the view
-	UIImage *topImage = [MPAnimation renderImageFromView:self.centerBar withRect:topRect];
-	UIImage *bottomImage = [MPAnimation renderImageFromView:self.centerBar withRect:bottomRect];
+	UIEdgeInsets insets = UIEdgeInsetsMake(0, 1, 0, 1);
+	UIImage *topImage = [MPAnimation renderImageForAntialiasing:[MPAnimation renderImageFromView:self.centerBar withRect:topRect] withInsets:insets];
+	UIImage *bottomImage = [MPAnimation renderImageForAntialiasing:[MPAnimation renderImageFromView:self.centerBar withRect:bottomRect] withInsets:insets];
 	
+	// account for 1-pixel clear margin we introduced for anti-aliasing
+	topRect = CGRectInset(topRect, -insets.left, -insets.top);
+	bottomRect = CGRectInset(bottomRect, -insets.left, -insets.top);
+
 	// create UIImageView's to hold the images
 	[self setFoldTop: [[UIImageView alloc] initWithImage:topImage]];
 	self.foldTop.frame = topRect;
@@ -80,8 +85,8 @@
 	self.foldBottom.layer.anchorPoint = CGPointMake(0.5, 1); // anchor at bottom
 	[self setDropShadow:self.foldTop];
 	[self setDropShadow:self.foldBottom];
-	[[self.foldTop layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.foldTop bounds]] CGPath]];	
-	[[self.foldBottom layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.foldBottom bounds]] CGPath]];	
+	[[self.foldTop layer] setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.foldTop bounds], insets.left, insets.top)] CGPath]];	
+	[[self.foldBottom layer] setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.foldBottom bounds], insets.left, insets.top)] CGPath]];
 }
 
 - (void)viewDidUnload

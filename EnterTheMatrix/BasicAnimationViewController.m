@@ -222,15 +222,11 @@
 		}
 					 } completion:^(BOOL finished) {
 						 
-						 [UIView animateWithDuration:([self animation] == AnimationTransform && (![self useTranslate] || ![self useRotate] || ![self useScale]))? 0.5 : 0
-										  animations:^{
-											  self.bar.transform = CGAffineTransformIdentity;
-											  self.bar.frame = newFrame;
-											  [[self.bar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bar bounds]] CGPath]];	
-										  } completion:^(BOOL finished) {
-											  self.orientation = newOrientation;
-											  self.bar.autoresizingMask = newResizing;
-										  }];
+						  self.bar.transform = CGAffineTransformIdentity;
+						  self.bar.frame = newFrame;
+						  [[self.bar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bar bounds]] CGPath]];	
+						  self.orientation = newOrientation;
+						  self.bar.autoresizingMask = newResizing;
 					 }
 	 ];
 }

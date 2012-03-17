@@ -11,5 +11,6 @@
 @interface MPAnimation : NSObject
 
 + (UIImage*)renderImageFromView:(UIView *)view withRect:(CGRect)frame;
-
++ (UIImage *)renderImage:(UIImage *)image withMargin:(CGFloat)width color:(UIColor *)color;
++ (UIImage *)renderImageForAntialiasing:(UIImage *)image withInsets:(UIEdgeInsets)insets;
 @end

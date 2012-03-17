@@ -142,17 +142,20 @@
 		}
 		
 		// Create the animation
-		CAKeyframeAnimation *anim = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; // we're animating transform property
-		anim.values = [NSArray arrayWithArray:array]; // set our keyframe valuesse
-		anim.repeatCount = 1;
-		anim.duration = duration;
-		anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
-		anim.fillMode = kCAFillModeForwards;
-		anim.removedOnCompletion = YES;
-				
-		[self.arc.layer addAnimation:anim forKey:@"animateTransform"];
-		NSValue* toValue = [anim.values lastObject];
-		self.arc.layer.transform = [toValue CATransform3DValue]; // set final state
+		// (we're animating transform property)
+		CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; 
+		// set our keyframe values
+		[animation setValues:[NSArray arrayWithArray:array]]; 		
+		[animation setDuration:duration];
+		[animation setTimingFunction:
+		 [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault]];
+		[animation setRemovedOnCompletion:YES];
+		
+		// add the animation
+		[self.arc.layer addAnimation:animation forKey:@"transform"];
+		// set final state
+		NSValue* toValue = [animation.values lastObject];
+		[self.arc.layer setTransform:[toValue CATransform3DValue]];
 	}
 
 	arcPosition = position;

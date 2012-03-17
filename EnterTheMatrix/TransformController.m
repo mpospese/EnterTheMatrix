@@ -8,6 +8,7 @@
 
 #import "TransformController.h"
 #import "TransformTable.h"
+#import "MPAnimation.h"
 
 #define TRANSFORM_POPOVER_ID	@"TransformPopover"
 #define INFO_POPOVER_ID			@"InfoPopover"
@@ -45,6 +46,14 @@
 	[self addObserverForTransform];
 	// Do any additional setup after loading the view.
 
+	// use some image tricks
+	UIImage *image = [MPAnimation renderImage:[UIImage imageNamed:[self imageName]] withMargin:10 color:[UIColor whiteColor]];
+	UIImageView *imgView = [[UIImageView alloc] initWithImage:image];
+	imgView.center = CGPointMake(roundf(CGRectGetMidX(self.view.frame)), roundf(CGRectGetMidY(self.view.frame)));
+	[imgView setUserInteractionEnabled:YES];
+	[self setContentView:imgView];
+	[self.view addSubview:imgView];
+
 	self.contentView.layer.shadowOpacity = 0.5;
 	self.contentView.layer.shadowOffset = CGSizeMake(0, 3);
 	[[self.contentView layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.contentView bounds]] CGPath]];
@@ -69,6 +78,15 @@
     // Release any retained subviews of the main view.
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	
+	self.contentView.center = CGPointMake(roundf(CGRectGetMidX(self.view.bounds)), roundf(CGRectGetMidY(self.view.bounds)));
+	self.contentView.bounds = CGRectMake(0, 0, 502, 382);
+	[self updateTransform];
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
@@ -76,8 +94,8 @@
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-	self.contentView.center = CGPointMake(CGRectGetMidX(self.view.frame), CGRectGetMidY(self.view.frame));
-	self.contentView.bounds = CGRectMake(0, 0, 500, 380);
+	self.contentView.center = CGPointMake(roundf(CGRectGetMidX(self.view.bounds)), roundf(CGRectGetMidY(self.view.bounds)));
+	self.contentView.bounds = CGRectMake(0, 0, 502, 382);
 }
 
 #pragma mark - Property
@@ -85,6 +103,11 @@
 - (BOOL)is3D
 {
 	return NO;
+}
+
+- (NSString *)imageName
+{
+	return @"matrix_02";
 }
 
 - (NSString *)transformKeyPath

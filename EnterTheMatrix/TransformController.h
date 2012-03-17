@@ -24,6 +24,7 @@
 @property(nonatomic, strong) UIPopoverController *popover;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (readonly, nonatomic) BOOL is3D;
+@property (readonly, nonatomic) NSString *imageName;
 
 - (IBAction)transformPressed:(id)sender;
 - (IBAction)resetPressed:(id)sender;
