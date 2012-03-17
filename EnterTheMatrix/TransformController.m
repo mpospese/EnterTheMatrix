@@ -47,6 +47,7 @@
 
 	self.contentView.layer.shadowOpacity = 0.5;
 	self.contentView.layer.shadowOffset = CGSizeMake(0, 3);
+	[[self.contentView layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.contentView bounds]] CGPath]];
 
 	UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
 	[self.contentView addGestureRecognizer:panGesture];
@@ -202,7 +203,6 @@
 	label.textColor = [UIColor blackColor];
 	label.font = [UIFont fontWithName:@"Menlo" size:18];
 	label.tag = TRANSFORM_LABEL_TAG;
-	label.layer.cornerRadius = 5;
 	return label;
 }
 
@@ -225,7 +225,9 @@
 	}
 	
 	position.y = position.y - 50;
-	[label superview].center = position;
+	UIView *container = [label superview];
+	container.center = position;
+	[[container layer] setShadowPath:[[UIBezierPath bezierPathWithRoundedRect:[container bounds] cornerRadius:5] CGPath]];	
 }
 
 - (void)setGesture:(UIGestureRecognizer *)gestureRecognizer translationforLabel:(UILabel *)label

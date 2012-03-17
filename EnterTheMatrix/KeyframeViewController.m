@@ -44,6 +44,7 @@
 	
 	self.controlFrame.layer.cornerRadius = 5;
 	[self addDropShadowToView:self.controlFrame];
+	[[self.controlFrame layer] setShadowPath:[[UIBezierPath bezierPathWithRoundedRect:[self.controlFrame bounds] cornerRadius:5] CGPath]];	
 	
 	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
 	[self.arc addGestureRecognizer:tap];

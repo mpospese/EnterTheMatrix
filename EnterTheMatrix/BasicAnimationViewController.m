@@ -51,9 +51,11 @@
 	
 	self.controlFrame.layer.cornerRadius = 5;
 	[self addDropShadowToView:self.controlFrame];
+	[[self.controlFrame layer] setShadowPath:[[UIBezierPath bezierPathWithRoundedRect:[self.controlFrame bounds] cornerRadius:5] CGPath]];	
 
 	orientation = OrientationBottom;
 	[self addDropShadowToView:self.bar];
+	[[self.bar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bar bounds]] CGPath]];	
 	
 	// Do any additional setup after loading the view.
 }
@@ -148,6 +150,23 @@
 		switch ([self animation]) {
 			case AnimationFrame:
 				self.bar.frame = newFrame;
+			{
+				// Because shadowPath is not an animatable property,
+				// we have to create our own animation for it, but this is
+				// pretty straight-forward
+				CGPathRef oldPath = CGPathRetain([[self.bar layer] shadowPath]);
+				[[self.bar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bar bounds]] CGPath]];
+				
+				CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"shadowPath"];
+				[pathAnimation setFromValue:(__bridge id)oldPath];
+				[pathAnimation setToValue:(id)[[self.bar layer] shadowPath]];
+				[pathAnimation setDuration:[self isFast]? 0.5 : 2.5];
+				[pathAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+				[pathAnimation setRemovedOnCompletion:YES];
+				
+				[[self.bar layer] addAnimation:pathAnimation forKey:@"shadowPath"];
+				CGPathRelease(oldPath);
+			}
 				break;
 				
 			case AnimationTransform:
@@ -207,6 +226,7 @@
 										  animations:^{
 											  self.bar.transform = CGAffineTransformIdentity;
 											  self.bar.frame = newFrame;
+											  [[self.bar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bar bounds]] CGPath]];	
 										  } completion:^(BOOL finished) {
 											  self.orientation = newOrientation;
 											  self.bar.autoresizingMask = newResizing;

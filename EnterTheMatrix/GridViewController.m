@@ -67,6 +67,7 @@
 {
 	[[view layer] setShadowPath:[[UIBezierPath bezierPathWithRoundedRect:[view bounds] cornerRadius:5] CGPath]];	
 }
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];

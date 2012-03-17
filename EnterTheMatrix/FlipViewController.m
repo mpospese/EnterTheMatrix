@@ -77,6 +77,11 @@
 	view.layer.shadowOffset = CGSizeMake(0, 3);
 }
 
+- (void)setShadowPathOnView:(UIView *)view
+{
+	[[view layer] setShadowPath:[[UIBezierPath bezierPathWithRoundedRect:[view bounds] cornerRadius:5] CGPath]];	
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -84,6 +89,7 @@
 
 	self.controlFrame.layer.cornerRadius = 5;
 	[self addDropShadowToView:self.controlFrame];
+	[self setShadowPathOnView:self.controlFrame];
 
 	UISwipeGestureRecognizer *left = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
 	left.direction = UISwipeGestureRecognizerDirectionLeft;
@@ -114,6 +120,7 @@
 	
 	// drop-shadow for content view
 	[self addDropShadowToView:self.contentView];
+	[[self.contentView layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.contentView bounds]] CGPath]];	
 }
 
 - (void)viewDidUnload
@@ -486,9 +493,11 @@
 	self.pageFront.layer.shadowOpacity = 0.5;
 	self.pageFront.layer.shadowRadius = 1;
 	self.pageFront.layer.shadowOffset = isVertical? CGSizeMake(0, isForward? 1 : -1) : CGSizeMake(isForward? 1 : -1, 0);
+	[[self.pageFront layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.pageFront bounds]] CGPath]];	
 	self.pageBack.layer.shadowOpacity = 0.5;
 	self.pageBack.layer.shadowRadius = 1;
 	self.pageBack.layer.shadowOffset = isVertical? CGSizeMake(0, isForward? -1 : 1) : CGSizeMake(isForward? -1 : 1, 0);
+	[[self.pageBack layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.pageBack bounds]] CGPath]];	
 
 	// set the back page in the vertical position (midpoint of animation)
 	[self doFlip2:0];

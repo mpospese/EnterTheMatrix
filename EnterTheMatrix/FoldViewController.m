@@ -45,9 +45,14 @@
 	
 	self.controlFrame.layer.cornerRadius = 5;
 	[self setDropShadow:self.controlFrame];
+	[[self.controlFrame layer] setShadowPath:[[UIBezierPath bezierPathWithRoundedRect:[self.controlFrame bounds] cornerRadius:5] CGPath]];	
+	
 	[self setDropShadow:self.topBar];
 	[self setDropShadow:self.centerBar];
 	[self setDropShadow:self.bottomBar];
+	[[self.topBar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.topBar bounds]] CGPath]];	
+	[[self.centerBar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.centerBar bounds]] CGPath]];	
+	[[self.bottomBar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bottomBar bounds]] CGPath]];	
 	
 	// Add our pinch gesture recognizer
 	UIPinchGestureRecognizer *pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
@@ -75,6 +80,8 @@
 	self.foldBottom.layer.anchorPoint = CGPointMake(0.5, 1); // anchor at bottom
 	[self setDropShadow:self.foldTop];
 	[self setDropShadow:self.foldBottom];
+	[[self.foldTop layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.foldTop bounds]] CGPath]];	
+	[[self.foldBottom layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.foldBottom bounds]] CGPath]];	
 }
 
 - (void)viewDidUnload
