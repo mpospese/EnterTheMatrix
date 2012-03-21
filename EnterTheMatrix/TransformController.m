@@ -31,6 +31,8 @@
 	if (self)
 	{
 		transform = [[MPTransform alloc] init];
+		if ([self is3D])
+			[transform addSkewOperation];
 	}
 	return self;
 }

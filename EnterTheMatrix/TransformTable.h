@@ -25,10 +25,12 @@
 - (IBAction)rotateXChanged:(id)sender;
 - (IBAction)rotateYChanged:(id)sender;
 - (IBAction)rotateZChanged:(id)sender;
+- (IBAction)skewChanged:(id)sender;
 
 - (IBAction)resetTranslatePressed:(id)sender;
 - (IBAction)resetScalePressed:(id)sender;
 - (IBAction)resetRotationPressed:(id)sender;
+- (IBAction)resetSkewPressed:(id)sender;
 - (IBAction)scaleLockPressed:(id)sender;
 
 @end

@@ -34,5 +34,5 @@
 - (UILabel *)makeLabel;
 - (void)setText:(NSString *)text forLabel:(UILabel *)label;
 - (void)positionLabel:(UILabel *)label aboveGesture:(UIGestureRecognizer *)gestureRecognizer;
-
+- (void)updateTransform;
 @end

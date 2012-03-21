@@ -10,6 +10,7 @@
 #define EnterTheMatrix_Enumerations_h
 
 typedef enum {
+	TransformSkew,
 	TransformTranslate,
 	TransformScale,
 	TransformRotate

@@ -12,6 +12,7 @@
 
 - (void)updateValueAsInt:(CGFloat)value forCell:(UIView *)cell withOffset:(NSUInteger)offset;
 - (void)updateValueAsFloat:(CGFloat)value forCell:(UIView *)cell withOffset:(NSUInteger)offset;
+- (void)updateValueAsFloat4:(CGFloat)value forCell:(UIView *)cell withOffset:(NSUInteger)offset;
 - (void)updateTranslateX:(UIView *)cell;
 - (void)updateTranslateY:(UIView *)cell;
 - (void)updateTranslate:(UIView *)cell;
@@ -23,6 +24,7 @@
 - (void)updateRotateY:(UIView *)cell;
 - (void)updateRotateZ:(UIView *)cell;
 - (void)updateRotate:(UIView *)cell;
+- (void)updateSkew:(UIView *)cell;
 
 @end
 
@@ -82,7 +84,7 @@
 
 - (CGSize)contentSizeForViewInPopover
 {
-	return CGSizeMake(286, ([self is3D]? 13 : 8) * 40);
+	return CGSizeMake(286, ([self is3D]? 15 : 8) * 40);
 }
 
 #pragma mark - Table view data source
@@ -103,7 +105,7 @@
 {
 	TransformOperation operation = (TransformOperation)[[[self.transform operationsOrder] objectAtIndex:indexPath.row] intValue];
 	
-	return 40 * (operation == TransformRotate? (self.is3D? 5 : 2) : (self.is3D? 4 : 3));
+	return 40 * (operation == TransformRotate? (self.is3D? 5 : 2) : operation == TransformSkew? 2 : (self.is3D? 4 : 3));
 }
 
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -120,15 +122,21 @@
 {
     static NSString *TranslateCellIdentifier = @"TranslateCell";
     static NSString *ScaleCellIdentifier = @"ScaleCell";
+	static NSString *RotateCellIdentifier = @"RotateCell";
+    static NSString *SkewCell3DIdentifier = @"SkewCell3D";
     static NSString *TranslateCell3DIdentifier = @"TranslateCell3D";
     static NSString *ScaleCell3DIdentifier = @"ScaleCell3D";
-    static NSString *RotateCellIdentifier = @"RotateCell";
-    static NSString *RotateCell3DIdentifier = @"RotateCell3D";
+     static NSString *RotateCell3DIdentifier = @"RotateCell3D";
     UITableViewCell *cell = nil;
 	
 	TransformOperation operation = (TransformOperation)[[[self.transform operationsOrder] objectAtIndex:indexPath.row] intValue];
     // Configure the cell...
     switch (operation) {
+		case TransformSkew:
+			cell = [tableView dequeueReusableCellWithIdentifier:SkewCell3DIdentifier];
+			[self updateSkew:cell];
+			break;
+			
 		case TransformTranslate:
 			cell = [tableView dequeueReusableCellWithIdentifier:[self is3D]? TranslateCell3DIdentifier : TranslateCellIdentifier];
 			[self updateTranslate:cell];
@@ -310,6 +318,12 @@
 	[self updateRotateZ:[sender superview]];
 }
 
+- (IBAction)skewChanged:(id)sender {
+	UISlider *slider = sender;
+	[self.transform setSkew:slider.value];
+	[self updateSkew:[sender superview]];
+}
+
 - (IBAction)resetTranslatePressed:(id)sender {
 	[UIView animateWithDuration:0.5 delay:0 options:UIViewAnimationCurveEaseInOut animations:^{
 		[self.transform resetTranslation];
@@ -329,6 +343,13 @@
 		[self.transform resetRotation];
 	} completion:nil];	
 	[self updateRotate:[sender superview]];
+}
+
+- (IBAction)resetSkewPressed:(id)sender {
+	[UIView animateWithDuration:0.5 delay:0 options:UIViewAnimationCurveEaseInOut animations:^{
+		[self.transform resetSkew];
+	} completion:nil];	
+	[self updateSkew:[sender superview]];
 }
 
 - (IBAction)scaleLockPressed:(id)sender {
@@ -363,6 +384,14 @@
 	[slider setValue:value];
 	UILabel *label = (UILabel *)[cell viewWithTag:200 + offset];
 	[label setText:[NSString stringWithFormat:@"%.03f", value]];
+}
+
+- (void)updateValueAsFloat4:(CGFloat)value forCell:(UIView *)cell withOffset:(NSUInteger)offset
+{
+	UISlider *slider = (UISlider *)[cell viewWithTag:100 + offset];
+	[slider setValue:value];
+	UILabel *label = (UILabel *)[cell viewWithTag:200 + offset];
+	[label setText:[NSString stringWithFormat:@"%.04f", value]];
 }
 
 - (void)updateTranslateX:(UIView *)cell
@@ -429,6 +458,11 @@
 - (void)updateRotateZ:(UIView *)cell
 {
 	[self updateValueAsFloat:self.transform.rotationZ forCell:cell withOffset:3];
+}
+
+- (void)updateSkew:(UIView *)cell
+{
+	[self updateValueAsFloat4:self.transform.skew forCell:cell withOffset:0];
 }
 
 - (void)updateRotate:(UIView *)cell

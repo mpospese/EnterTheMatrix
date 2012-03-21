@@ -235,8 +235,55 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                             </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" showsReorderControl="YES" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="SkewCell3D" rowHeight="80" id="XMg-Q3-yZ6">
+                                <rect key="frame" x="0.0" y="342" width="320" height="80"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="79"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Skew" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" id="bvC-pZ-QQC">
+                                            <rect key="frame" x="10" y="0.0" width="300" height="40"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </label>
+                                        <slider opaque="NO" tag="100" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-0.0025000000000000001" maxValue="0.0025000000000000001" id="bHE-o5-EXh">
+                                            <rect key="frame" x="64" y="48.5" width="192" height="23"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                            <connections>
+                                                <action selector="skewChanged:" destination="9zc-qS-6Zv" eventType="valueChanged" id="1dF-QN-ujK"/>
+                                            </connections>
+                                        </slider>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="200" contentMode="left" text="0.0025" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="WjT-Ei-jm7">
+                                            <rect key="frame" x="263" y="51" width="50" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Zgg-Lm-kAE">
+                                            <rect key="frame" x="256" y="5.5" width="54" height="29"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
+                                            <state key="normal" title="Reset">
+                                                <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <state key="highlighted">
+                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="resetSkewPressed:" destination="9zc-qS-6Zv" eventType="touchUpInside" id="YIO-JQ-ZN4"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                            </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" showsReorderControl="YES" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="TranslateCell3D" rowHeight="160" id="wNP-z3-Vhk">
-                                <rect key="frame" x="0.0" y="342" width="320" height="160"/>
+                                <rect key="frame" x="0.0" y="422" width="320" height="160"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="159"/>
@@ -332,7 +379,7 @@
                                 </view>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" showsReorderControl="YES" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="RotateCell3D" rowHeight="200" id="nvX-l6-Fwq">
-                                <rect key="frame" x="0.0" y="502" width="320" height="200"/>
+                                <rect key="frame" x="0.0" y="582" width="320" height="200"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="199"/>
@@ -449,7 +496,7 @@
                                 </view>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" showsReorderControl="YES" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="ScaleCell3D" rowHeight="160" id="jiP-5b-qys">
-                                <rect key="frame" x="0.0" y="702" width="320" height="160"/>
+                                <rect key="frame" x="0.0" y="782" width="320" height="160"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="159"/>
@@ -1369,6 +1416,128 @@ www.glyphish.com</string>
         <image name="matrix_01.png" width="480" height="360"/>
         <image name="matrix_02.png" width="480" height="360"/>
     </resources>
+    <classes>
+        <class className="Arc" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/Arc.h"/>
+        </class>
+        <class className="BasicAnimationViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/BasicAnimationViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="animationChanged:"/>
+                <relationship kind="action" name="goPressed:"/>
+                <relationship kind="outlet" name="bar" candidateClass="UIView"/>
+                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
+                <relationship kind="outlet" name="modeSegment" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="rotateLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="rotateSwitch" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="scaleLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="scaleSwitch" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="speedSwitch" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="translateLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="translateSwitch" candidateClass="UISwitch"/>
+            </relationships>
+        </class>
+        <class className="CATransformController" superclassName="TransformController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/CATransformController.h"/>
+        </class>
+        <class className="CGAffineController" superclassName="TransformController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/CGAffineController.h"/>
+        </class>
+        <class className="FlipViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlipViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="skewValueChanged:"/>
+                <relationship kind="outlet" name="contentView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
+                <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="skewLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="skewSlider" candidateClass="UISlider"/>
+                <relationship kind="outlet" name="speedSwitch" candidateClass="UISwitch"/>
+            </relationships>
+        </class>
+        <class className="FoldViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FoldViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="bottomBar" candidateClass="UIView"/>
+                <relationship kind="outlet" name="centerBar" candidateClass="UIView"/>
+                <relationship kind="outlet" name="contentView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
+                <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
+                <relationship kind="outlet" name="skewSegment" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="topBar" candidateClass="UIView"/>
+            </relationships>
+        </class>
+        <class className="GridView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/GridView.h"/>
+        </class>
+        <class className="GridViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/GridViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="lockPressed:"/>
+                <relationship kind="action" name="resetPressed:"/>
+                <relationship kind="action" name="rotateHorzChanged:"/>
+                <relationship kind="action" name="rotateVertChanged:"/>
+                <relationship kind="action" name="scaleHorzChanged:"/>
+                <relationship kind="action" name="scaleVertChanged:"/>
+                <relationship kind="action" name="translateHorzChanged:"/>
+                <relationship kind="action" name="translateVertChanged:"/>
+                <relationship kind="outlet" name="grid" candidateClass="GridView"/>
+                <relationship kind="outlet" name="horizontalPanel" candidateClass="UIView"/>
+                <relationship kind="outlet" name="lockButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="resetButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="verticalPanel" candidateClass="UIView"/>
+            </relationships>
+        </class>
+        <class className="InfoView" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/InfoView.h"/>
+            <relationships>
+                <relationship kind="outlet" name="label" candidateClass="UITextView"/>
+            </relationships>
+        </class>
+        <class className="KeyframeViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/KeyframeViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="arcPositionValueChanged:"/>
+                <relationship kind="outlet" name="arc" candidateClass="Arc"/>
+                <relationship kind="outlet" name="arcPositionSegment" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="bottomLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
+                <relationship kind="outlet" name="modeSegment" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="speedSwitch" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="topLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="TransformController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TransformController.h"/>
+            <relationships>
+                <relationship kind="action" name="infoPressed:"/>
+                <relationship kind="action" name="resetPressed:"/>
+                <relationship kind="action" name="transformPressed:"/>
+                <relationship kind="outlet" name="contentView" candidateClass="UIView"/>
+            </relationships>
+        </class>
+        <class className="TransformTable" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TransformTable.h"/>
+            <relationships>
+                <relationship kind="action" name="resetRotationPressed:"/>
+                <relationship kind="action" name="resetScalePressed:"/>
+                <relationship kind="action" name="resetSkewPressed:"/>
+                <relationship kind="action" name="resetTranslatePressed:"/>
+                <relationship kind="action" name="rotateXChanged:"/>
+                <relationship kind="action" name="rotateYChanged:"/>
+                <relationship kind="action" name="rotateZChanged:"/>
+                <relationship kind="action" name="rotationAngleChanged:"/>
+                <relationship kind="action" name="scaleLockPressed:"/>
+                <relationship kind="action" name="scaleXChanged:"/>
+                <relationship kind="action" name="scaleYChanged:"/>
+                <relationship kind="action" name="scaleZChanged:"/>
+                <relationship kind="action" name="skewChanged:"/>
+                <relationship kind="action" name="translateXChanged:"/>
+                <relationship kind="action" name="translateYChanged:"/>
+                <relationship kind="action" name="translateZChanged:"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

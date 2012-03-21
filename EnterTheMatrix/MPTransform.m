@@ -19,6 +19,8 @@
 
 @implementation MPTransform
 
+@synthesize affineTransform = _affineTransform;
+@synthesize transform3D = _transform3D;
 @synthesize translateX;
 @synthesize translateY;
 @synthesize translateZ;
@@ -29,6 +31,7 @@
 @synthesize rotationX;
 @synthesize rotationY;
 @synthesize rotationZ;
+@synthesize skew;
 
 - (id)init
 {
@@ -53,16 +56,6 @@
 }
 
 #pragma mark - Properties
-
-- (CGAffineTransform)affineTransform
-{
-	return _affineTransform;
-}
-
-- (CATransform3D)transform3D
-{
-	return _transform3D;
-}
 
 - (void)setAffineTransform:(CGAffineTransform)value
 {
@@ -175,17 +168,30 @@
 	}
 }
 
+- (void)setSkew:(CGFloat)value
+{
+	if (skew != value)
+	{
+		skew = value;
+		[self updateTransform];
+	}
+}
+
 #pragma mark - Instance methods
 
 - (void)updateTransform
 {
 	CGAffineTransform t = CGAffineTransformIdentity;
 	CATransform3D t3D = CATransform3DIdentity;
-	
+		
 	for (NSNumber *opAsNum in _operationsOrder)
 	{
 		TransformOperation oper = (TransformOperation)[opAsNum intValue];
 		switch (oper) {
+			case TransformSkew:
+				t3D.m34 = self.skew;
+				break;
+				
 			case TransformTranslate:
 				t = CGAffineTransformTranslate(t, self.translateX, self.translateY);
 				t3D = CATransform3DTranslate(t3D, self.translateX, self.translateY, self.translateZ);
@@ -208,6 +214,11 @@
 	
 	[self setAffineTransform:t];
 	[self setTransform3D:t3D];
+}
+
+- (void)addSkewOperation
+{
+	[_operationsOrder insertObject:[NSNumber numberWithInt:TransformSkew] atIndex:0];
 }
 
 - (void)moveOperationAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
@@ -238,6 +249,7 @@
 	rotationX = 0;
 	rotationY = 0;
 	rotationZ = 1;
+	skew = 0;
 	[self setAffineTransform:CGAffineTransformIdentity];
 	[self setTransform3D:CATransform3DIdentity];
 }
@@ -267,6 +279,12 @@
 	[self updateTransform];
 }
 
+- (void)resetSkew
+{
+	skew = 0;
+	[self updateTransform];
+}
+
 - (CGAffineTransform)affineTransformExcluding:(TransformOperation)operation
 {
 	CGAffineTransform t = CGAffineTransformIdentity;
@@ -277,6 +295,10 @@
 			return t;
 		
 		switch (oper) {
+			case TransformSkew:
+				// do nothing
+				break;
+				
 			case TransformTranslate:
 				t = CGAffineTransformScale(t, self.translateX, self.translateY);
 				break;
@@ -304,6 +326,10 @@
 			return t;
 		
 		switch (oper) {
+			case TransformSkew:
+				t.m34 = self.skew;
+				break;
+				
 			case TransformTranslate:
 				t = CATransform3DTranslate(t, self.translateX, self.translateY, self.translateZ);
 				break;
