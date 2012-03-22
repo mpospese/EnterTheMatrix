@@ -216,6 +216,11 @@
 	CGRect bottomRect = topRect;
 	bottomRect.origin.y += topRect.size.height;
 	
+	// account for 1-pixel clear margin we introduced for anti-aliasing
+	UIEdgeInsets insets = UIEdgeInsetsMake(0, 1, 0, 1);
+	topRect = CGRectInset(topRect, -insets.left, -insets.top);
+	bottomRect = CGRectInset(bottomRect, -insets.left, -insets.top);
+
 	self.foldTop.frame = topRect;
 	self.foldBottom.frame = bottomRect;
 
