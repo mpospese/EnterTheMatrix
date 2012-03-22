@@ -172,11 +172,11 @@
 	
     if (state == UIGestureRecognizerStateBegan)
     {		
-		[self setPinchStartGap: currentGap];
+		[self setPinchStartGap:currentGap];
 		[self startFold];
     }
 	
-    if (state == UIGestureRecognizerStateEnded)
+    if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
     {
 		[self endFold];
     }
