@@ -224,8 +224,8 @@
 	self.foldTop.frame = topRect;
 	self.foldBottom.frame = bottomRect;
 
-	[self.contentView insertSubview:foldTop belowSubview:self.topBar];
-	[self.contentView insertSubview:foldBottom belowSubview:self.bottomBar];
+	[self.contentView insertSubview:foldTop aboveSubview:self.centerBar];
+	[self.contentView insertSubview:foldBottom aboveSubview:self.foldTop];
 
 	[self.centerBar setHidden:YES];
 }
