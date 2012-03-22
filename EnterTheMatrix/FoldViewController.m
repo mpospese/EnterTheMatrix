@@ -236,33 +236,42 @@
 	if (progress == [self lastProgress])
 		return;
 	[self setLastProgress:progress];
-	if ([self isFolded])
-		progress = 1-progress;
 	
-	//self.topBar.transform = CGAffineTransformMakeTranslation(0, -difference/2);
-	//self.bottomBar.transform = CGAffineTransformMakeTranslation(0, difference/2);
+	CATransform3D tUpperFold;
+	CATransform3D tLowerFold;
+	
+	CGFloat verticalOffset = [self calculateFold:progress upperFold:&tUpperFold lowerFold:&tLowerFold];
+	
+	self.topBar.layer.transform = CATransform3DMakeTranslation(0, verticalOffset, 0);
+	self.bottomBar.layer.transform = CATransform3DMakeTranslation(0, -verticalOffset, 0);
+	self.foldTop.layer.transform = tUpperFold;
+	self.foldBottom.layer.transform = tLowerFold;
+}
 
+- (CGFloat)calculateFold:(CGFloat)progress upperFold:(CATransform3D*)upperFoldTransform lowerFold:(CATransform3D*)lowerFoldTransform{
+	if ([self isFolded])
+		progress = 1 - progress;
+	
 	// We need to move the folding flaps towards the center based on the cosine of the angle of our fold
 	// Basically what this does is keep the bottom of the top fold (and top of the bottom fold) anchored to the midpoint.
 	CGFloat cosine = cosf(radians(90 * progress));
 	CGFloat verticalOffset = (FOLD_HEIGHT / 2) * (1- cosine); // how much to offset each panel by
-	
-	// move the top and bottom panels towards the center
-	self.topBar.transform = CGAffineTransformMakeTranslation(0, verticalOffset);
-	self.bottomBar.transform = CGAffineTransformMakeTranslation(0, -verticalOffset);
 	
 	// fold the top and bottom halves of the center panel away from us
 	CATransform3D tTop = CATransform3DIdentity;
 	tTop.m34 = [self skew] * progress;
 	tTop = CATransform3DTranslate(tTop, 0, verticalOffset, 0); // shift panel towards center
 	tTop = CATransform3DRotate(tTop, radians([self skewAngle] * progress), -1, 0, 0); // rotate away from viewer
-	self.foldTop.layer.transform = tTop;
+	*upperFoldTransform = tTop;
 	
 	CATransform3D tBottom = CATransform3DIdentity;
 	tBottom.m34 = [self skew] * progress;
 	tBottom = CATransform3DTranslate(tBottom, 0, -verticalOffset, 0); // shift panel towards center
 	tBottom = CATransform3DRotate(tBottom, radians(-[self skewAngle] * progress), -1, 0, 0); // rotate away from viewer
 	self.foldBottom.layer.transform = tBottom;
+	*lowerFoldTransform = tBottom;
+	
+	return verticalOffset;
 }
 
 - (void)endFold
@@ -277,32 +286,95 @@
 		finish = 1 - cosf(radians(90 * [self lastProgress])) >= 0.5;
 	}
 	
-	[UIView animateWithDuration:0.3 animations:^{
-		if (finish)
-		{
-			[self doFold:FOLD_HEIGHT];
-		}
-		else
-		{
-			[self doFold:0];
-		}
-	} completion:^(BOOL finished) {
-		
-		if (finish)
-			[self setFolded:![self isFolded]];
-		
-		// remove the 2 image halves and restore the center bar
-		[foldTop removeFromSuperview];
-		[foldBottom removeFromSuperview];
+	if ([self lastProgress] > 0 && [self lastProgress] < 1)
+		[self animateFold:finish];
+	else
+		[self postFold:finish];
+}
 
-		if (![self isFolded])
-		{
-			self.topBar.transform = CGAffineTransformIdentity;
-			self.bottomBar.transform = CGAffineTransformIdentity;
-			[self.centerBar setHidden:NO];
-		}
+// Post fold cleanup (for animation completion block)
+- (void)postFold:(BOOL)finish
+{
+	// final animation completed
+	if (finish)
+		[self setFolded:![self isFolded]];
+	
+	// remove the 2 image halves and restore the center bar
+	[foldTop removeFromSuperview];
+	[foldBottom removeFromSuperview];
+	
+	if (![self isFolded])
+	{
+		self.topBar.transform = CGAffineTransformIdentity;
+		self.bottomBar.transform = CGAffineTransformIdentity;
+		[self.centerBar setHidden:NO];
+	}
+}
+
+- (void)animateFold:(BOOL)finish
+{
+	// Figure out how many frames we want
+	CGFloat duration = 0.3;
+	NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
+	
+	// Build an array of keyframes (each a single transform)
+	NSMutableArray* arrayTop = [NSMutableArray arrayWithCapacity:frameCount + 1];
+	NSMutableArray* arrayUpperFold = [NSMutableArray arrayWithCapacity:frameCount + 1];
+	NSMutableArray* arrayLowerFold = [NSMutableArray arrayWithCapacity:frameCount + 1];
+	NSMutableArray* arrayBottom = [NSMutableArray arrayWithCapacity:frameCount + 1];
+	CGFloat toProgress = finish? 1 : 0;
+	CGFloat progress;
+	CGFloat verticalOffset;
+	CATransform3D upperFold, lowerFold;
+	for (int frame = 0; frame <= frameCount; frame++)
+	{
+		progress = [self lastProgress] + (((toProgress - [self lastProgress]) * frame) / frameCount);
+		verticalOffset = [self calculateFold:progress upperFold:&upperFold lowerFold:&lowerFold];
+		[arrayTop addObject:[NSNumber numberWithFloat:verticalOffset]];
+		[arrayUpperFold addObject:[NSValue valueWithCATransform3D:upperFold]];
+		[arrayLowerFold addObject:[NSValue valueWithCATransform3D:lowerFold]];
+		[arrayBottom addObject:[NSNumber numberWithFloat:-verticalOffset]];
+	}
+	
+	// Create a transaction
+	[CATransaction begin];
+	[CATransaction setValue:[NSNumber numberWithFloat:duration] forKey:kCATransactionAnimationDuration];
+	[CATransaction setValue:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault] forKey:kCATransactionAnimationTimingFunction];
+	[CATransaction setCompletionBlock:^{
+		[self postFold:finish];
 	}];
 	
+	// Create the 4 animations
+	CAKeyframeAnimation *animationTop = [CAKeyframeAnimation animationWithKeyPath:@"transform.translation.y"]; 
+	[animationTop setValues:[NSArray arrayWithArray:arrayTop]]; 		
+	[animationTop setRemovedOnCompletion:YES];
+	
+	CAKeyframeAnimation *animationUpperFold = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; 
+	[animationUpperFold setValues:[NSArray arrayWithArray:arrayUpperFold]]; 		
+	[animationUpperFold setRemovedOnCompletion:YES];
+	
+	CAKeyframeAnimation *animationLowerFold = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; 
+	[animationLowerFold setValues:[NSArray arrayWithArray:arrayLowerFold]]; 		
+	[animationLowerFold setRemovedOnCompletion:YES];
+	
+	CAKeyframeAnimation *animationBottom = [CAKeyframeAnimation animationWithKeyPath:@"transform.translation.y"]; 
+	[animationBottom setValues:[NSArray arrayWithArray:arrayBottom]]; 		
+	[animationBottom setRemovedOnCompletion:YES];
+	
+	// add the animations
+	[self.topBar.layer addAnimation:animationTop forKey:@"transformTop"];
+	[self.foldTop.layer addAnimation:animationUpperFold forKey:@"transformUpperFold"];
+	[self.foldBottom.layer addAnimation:animationLowerFold forKey:@"transformLowerFold"];
+	[self.bottomBar.layer addAnimation:animationBottom forKey:@"transformBottom"];
+	
+	// set final states
+	[self.topBar.layer setTransform:CATransform3DMakeTranslation(0, [[[animationTop values] lastObject] floatValue], 0)];
+	[self.foldTop.layer setTransform:[[[animationUpperFold values] lastObject] CATransform3DValue]];
+	[self.foldBottom.layer setTransform:[[[animationLowerFold values] lastObject] CATransform3DValue]];
+	[self.bottomBar.layer setTransform:CATransform3DMakeTranslation(0, [[[animationBottom values] lastObject] floatValue], 0)];
+	
+	// commit the transaction
+	[CATransaction commit];
 }
 
 
