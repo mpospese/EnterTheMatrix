@@ -17,6 +17,7 @@
 @interface FoldViewController ()
 
 @property (assign, nonatomic, getter = isFolded) BOOL folded;
+@property (assign, nonatomic, getter = isFolding) BOOL folding;
 @property (assign, nonatomic) CGFloat pinchStartGap;
 @property (assign, nonatomic) CGFloat lastProgress;
 
@@ -25,6 +26,7 @@
 @implementation FoldViewController
 
 @synthesize folded;
+@synthesize folding;
 @synthesize pinchStartGap;
 @synthesize lastProgress;
 @synthesize scrollView;
@@ -51,10 +53,10 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
 	
+	// Set drop shadows and shadow paths on views
 	self.controlFrame.layer.cornerRadius = 5;
 	[self setDropShadow:self.controlFrame];
 	[[self.controlFrame layer] setShadowPath:[[UIBezierPath bezierPathWithRoundedRect:[self.controlFrame bounds] cornerRadius:5] CGPath]];	
-	
 	[self setDropShadow:self.topBar];
 	[self setDropShadow:self.centerBar];
 	[self setDropShadow:self.bottomBar];
@@ -62,8 +64,14 @@
 	[[self.centerBar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.centerBar bounds]] CGPath]];	
 	[[self.bottomBar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bottomBar bounds]] CGPath]];	
 	
+	// Add our tap gesture recognizer
+	UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+	tapGesture.delegate = self;
+	[self.scrollView addGestureRecognizer:tapGesture];
+	
 	// Add our pinch gesture recognizer
 	UIPinchGestureRecognizer *pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
+	pinchGesture.delegate = self;
 	[self.view addGestureRecognizer:pinchGesture];
 	
 	// We want to split the center bar in 2 and create 2 images from it- these will be our folding halves
@@ -159,6 +167,13 @@
 
 #pragma mark - Gesture handlers
 
+- (void)handleTap:(UITapGestureRecognizer *)gestureRecognizer
+{
+	[self setLastProgress:0];
+	[self startFold];
+	[self animateFold:YES];
+}
+
 - (void)handlePinch:(UIPinchGestureRecognizer *)gestureRecognizer {
     UIGestureRecognizerState state = [gestureRecognizer state];
 	
@@ -205,10 +220,18 @@
 	}
 }
 
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+	return ![self isFolding];
+}
+
 #pragma mark - Animations
 
 - (void)startFold
 {
+	[self setFolding:YES];
 	// replace the center bar with the 2 image halves
 	CGRect barRect =  self.centerBar.frame;//[self.contentView convertRect:self.centerBar.frame fromView:self.centerBar];
 	CGRect topRect = barRect;
@@ -295,6 +318,8 @@
 // Post fold cleanup (for animation completion block)
 - (void)postFold:(BOOL)finish
 {
+	[self setFolding:NO];
+	
 	// final animation completed
 	if (finish)
 		[self setFolded:![self isFolded]];
@@ -313,6 +338,8 @@
 
 - (void)animateFold:(BOOL)finish
 {
+	[self setFolding:YES];
+	
 	// Figure out how many frames we want
 	CGFloat duration = 0.3;
 	NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
