@@ -16,12 +16,6 @@ typedef enum
 } SkewMode;
 
 @interface FoldViewController : UIViewController
-{
-	BOOL folded;
-	
-    CGFloat pinchStartGap;
-	CGFloat lastProgress;
-}
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *contentView;

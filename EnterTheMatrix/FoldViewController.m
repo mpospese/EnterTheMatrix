@@ -16,9 +16,17 @@
 
 @interface FoldViewController ()
 
+@property (assign, nonatomic, getter = isFolded) BOOL folded;
+@property (assign, nonatomic) CGFloat pinchStartGap;
+@property (assign, nonatomic) CGFloat lastProgress;
+
 @end
 
 @implementation FoldViewController
+
+@synthesize folded;
+@synthesize pinchStartGap;
+@synthesize lastProgress;
 @synthesize scrollView;
 @synthesize contentView;
 @synthesize topBar;
@@ -154,7 +162,7 @@
 - (void)handlePinch:(UIPinchGestureRecognizer *)gestureRecognizer {
     UIGestureRecognizerState state = [gestureRecognizer state];
 	
-	CGFloat currentGap = pinchStartGap;
+	CGFloat currentGap = [self pinchStartGap];
 	if (state != UIGestureRecognizerStateEnded && gestureRecognizer.numberOfTouches == 2)
 	{
 		CGPoint p1 = [gestureRecognizer locationOfTouch:0 inView:self.view];
@@ -164,7 +172,7 @@
 	
     if (state == UIGestureRecognizerStateBegan)
     {		
-		pinchStartGap = currentGap;
+		[self setPinchStartGap: currentGap];
 		[self startFold];
     }
 	
@@ -174,26 +182,26 @@
     }
 	else if (state == UIGestureRecognizerStateChanged && gestureRecognizer.numberOfTouches == 2)
 	{
-		if (folded)
+		if ([self isFolded])
 		{
 			// pinching out, want + diff
-			if (currentGap < pinchStartGap)
-				currentGap = pinchStartGap; // min
+			if (currentGap < [self pinchStartGap])
+				currentGap = [self pinchStartGap]; // min
 			
-			if (currentGap > pinchStartGap + FOLD_HEIGHT)
-				currentGap = pinchStartGap + FOLD_HEIGHT; // max
+			if (currentGap > [self pinchStartGap] + FOLD_HEIGHT)
+				currentGap = [self pinchStartGap] + FOLD_HEIGHT; // max
 		}
 		else 
 		{
 			// pinching in, want - diff
-			if (currentGap < pinchStartGap - FOLD_HEIGHT)
-				currentGap = pinchStartGap - FOLD_HEIGHT; // min
+			if (currentGap < [self pinchStartGap] - FOLD_HEIGHT)
+				currentGap = [self pinchStartGap] - FOLD_HEIGHT; // min
 			
-			if (currentGap > pinchStartGap)
-				currentGap = pinchStartGap; // max
+			if (currentGap > [self pinchStartGap])
+				currentGap = [self pinchStartGap]; // max
 		}
 		
-		[self doFold:currentGap - pinchStartGap];
+		[self doFold:currentGap - [self pinchStartGap]];
 	}
 }
 
@@ -220,10 +228,10 @@
 - (void)doFold:(CGFloat)difference
 {
 	CGFloat progress = fabsf(difference) / FOLD_HEIGHT;
-	if (progress == lastProgress)
+	if (progress == [self lastProgress])
 		return;
-	lastProgress = progress;
-	if (folded)
+	[self setLastProgress:progress];
+	if ([self isFolded])
 		progress = 1-progress;
 	
 	//self.topBar.transform = CGAffineTransformMakeTranslation(0, -difference/2);
@@ -255,13 +263,13 @@
 - (void)endFold
 {	
 	BOOL finish = NO;
-	if (folded)
+	if ([self isFolded])
 	{
-		finish = 1 - cosf(radians(90 * (1-lastProgress))) <= 0.5;		
+		finish = 1 - cosf(radians(90 * (1-[self lastProgress]))) <= 0.5;		
 	}
 	else
 	{
-		finish = 1 - cosf(radians(90 * lastProgress)) >= 0.5;
+		finish = 1 - cosf(radians(90 * [self lastProgress])) >= 0.5;
 	}
 	
 	[UIView animateWithDuration:0.3 animations:^{
@@ -276,13 +284,13 @@
 	} completion:^(BOOL finished) {
 		
 		if (finish)
-			folded = !folded;
+			[self setFolded:![self isFolded]];
 		
 		// remove the 2 image halves and restore the center bar
 		[foldTop removeFromSuperview];
 		[foldBottom removeFromSuperview];
 
-		if (!folded)
+		if (![self isFolded])
 		{
 			self.topBar.transform = CGAffineTransformIdentity;
 			self.bottomBar.transform = CGAffineTransformIdentity;
