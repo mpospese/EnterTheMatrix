@@ -277,7 +277,7 @@
 			[self doFlip2:progress - 1];
 	}
 	
-	if (state == UIGestureRecognizerStateEnded)
+	if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
 	{
 		CGPoint vel = [gestureRecognizer velocityInView:gestureRecognizer.view];
 		
