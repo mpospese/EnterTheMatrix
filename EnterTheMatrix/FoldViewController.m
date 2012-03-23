@@ -11,6 +11,7 @@
 #import "MPAnimation.h"
 
 #define FOLD_HEIGHT	120.
+#define DEFAULT_DURATION 0.3
 #define DEFAULT_SKEW	-(1. / 500.)
 #define SKEW_ANGLE_OFFSET	7
 
@@ -341,7 +342,7 @@
 	[self setFolding:YES];
 	
 	// Figure out how many frames we want
-	CGFloat duration = 0.3;
+	CGFloat duration = DEFAULT_DURATION;
 	NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
 	
 	// Build an array of keyframes (each a single transform)
