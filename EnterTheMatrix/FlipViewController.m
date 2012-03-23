@@ -322,6 +322,8 @@
 				CGFloat progress = [self progressFromPosition:currentPosition];
 				if (([self isFlipFrontPage] && progress > 1) || (![self isFlipFrontPage] && progress < 1))
 					progress = 1;
+				if (progress > 1)
+					progress -= 1;
 				[self animateFlip1:shouldFallBack fromProgress:progress];
 			}
 			else
