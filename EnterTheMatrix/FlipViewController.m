@@ -438,23 +438,73 @@
 	[self setAnimating:YES];
 	[self startFlipWithDirection:aDirection orientation:anOrientation];
 	
-	[UIView animateWithDuration:[self.speedSwitch isOn]? 0.5 : 2.5 delay:0 options:UIViewAnimationCurveEaseIn animations:^{
-		
-		[self doFlip1:1.0];
-		
-	} completion:^(BOOL finished) {
+	// Figure out how many frames we want
+	CGFloat duration = [self.speedSwitch isOn]? 0.5 : 2.5;
+	NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
+	
+	// Build an array of keyframes (each a single transform)
+	NSMutableArray* array = [NSMutableArray arrayWithCapacity:frameCount + 1];
+	NSMutableArray* array2 = [NSMutableArray arrayWithCapacity:frameCount + 1];
+	CGFloat progress;
+	for (int frame = 0; frame <= frameCount; frame++)
+	{
+		progress = ((float)frame) / frameCount;
+		[array addObject:[NSValue valueWithCATransform3D:[self flipTransform1:progress]]];
+		[array2 addObject:[NSValue valueWithCATransform3D:[self flipTransform2:progress]]];
+	}
+	
+	// Create a transaction
+	[CATransaction begin];
+	[CATransaction setValue:[NSNumber numberWithFloat:duration] forKey:kCATransactionAnimationDuration];
+	[CATransaction setValue:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn] forKey:kCATransactionAnimationTimingFunction];
+	[CATransaction setCompletionBlock:^{
+		// 2nd half of animation, once 1st half completes
 		[self setFlipFrontPage:NO];
 		self.pageFront.hidden = YES;
 		self.pageBack.hidden = NO;
-		[UIView animateWithDuration:[self.speedSwitch isOn]? 0.5 : 2.5 delay:0 options:UIViewAnimationCurveEaseOut animations:^{
-			
-			[self doFlip2:1.0];
-			
-		} completion:^(BOOL finished) {
+		
+		// Create a transaction
+		[CATransaction begin];
+		[CATransaction setValue:[NSNumber numberWithFloat:duration] forKey:kCATransactionAnimationDuration];
+		[CATransaction setValue:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut] forKey:kCATransactionAnimationTimingFunction];
+		[CATransaction setCompletionBlock:^{
+			// once 2nd half completes
 			[self endFlip:YES];
 			[self setAnimating:NO];
 		}];
+		
+		// Create the animation
+		// (we're animating transform property)
+		CAKeyframeAnimation *animation2 = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; 
+		// set our keyframe values
+		[animation2 setValues:[NSArray arrayWithArray:array2]]; 		
+		[animation2 setRemovedOnCompletion:YES];
+		
+		// add the animation
+		[self.pageBack.layer addAnimation:animation2 forKey:@"transform2"];
+		// set final state
+		NSValue* toValue = [animation2.values lastObject];
+		[self.pageBack.layer setTransform:[toValue CATransform3DValue]];
+		
+		// Commit the transaction
+		[CATransaction commit];
 	}];
+		
+	// Create the animation
+	// (we're animating transform property)
+	CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; 
+	// set our keyframe values
+	[animation setValues:[NSArray arrayWithArray:array]]; 		
+	[animation setRemovedOnCompletion:YES];
+	
+	// add the animation
+	[self.pageFront.layer addAnimation:animation forKey:@"transform1"];
+	// set final state
+	NSValue* toValue = [animation.values lastObject];
+	[self.pageFront.layer setTransform:[toValue CATransform3DValue]];
+
+	// Commit the transaction
+	[CATransaction commit];
 }
 
 - (void)startFlipWithDirection:(FlipDirection)aDirection orientation:(FlipOrientation)anOrientation
