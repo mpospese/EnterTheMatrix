@@ -355,19 +355,54 @@
 			else
 			{
 				// 1-stage animation
-				[UIView animateWithDuration:DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5) delay:0 options:UIViewAnimationCurveEaseOut animations:^{
-					if (shouldFallBack)
-						[self doFlip1:0];
-					else
-						[self doFlip2:1];
-				} completion:^(BOOL finished) {
-					
+				CALayer *layer = shouldFallBack? self.pageFront.layer : self.pageBack.layer;
+				
+				// Figure out how many frames we want
+				CGFloat duration = DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5);
+				NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
+				
+				// Build an array of keyframes (each a single transform)
+				NSMutableArray* array = [NSMutableArray arrayWithCapacity:frameCount + 1];
+				CGFloat progress;
+				CGFloat fromProgress = [self progressFromPosition:currentPosition];
+				if (!shouldFallBack)
+					fromProgress -= 1;
+				CGFloat toProgress = shouldFallBack? 0 : 1;
+				
+				for (int frame = 0; frame <= frameCount; frame++)
+				{
+					progress = fromProgress + (toProgress - fromProgress) * ((float)frame) / frameCount;
+					[array addObject:[NSValue valueWithCATransform3D:shouldFallBack? [self flipTransform1:progress] : [self flipTransform2:progress]]];
+				}
+				
+				// Create a transaction
+				[CATransaction begin];
+				[CATransaction setValue:[NSNumber numberWithFloat:duration] forKey:kCATransactionAnimationDuration];
+				[CATransaction setValue:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut] forKey:kCATransactionAnimationTimingFunction];
+				[CATransaction setCompletionBlock:^{
+					// once 2nd half completes
 					[self endFlip:!shouldFallBack];
 					
 					// Clear flags
 					[self setAnimating:NO];
 					[self setPanning:NO];
 				}];
+				
+				// Create the animation
+				// (we're animating transform property)
+				CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; 
+				// set our keyframe values
+				[animation setValues:[NSArray arrayWithArray:array]]; 		
+				[animation setRemovedOnCompletion:YES];
+				
+				// add the animation
+				[layer addAnimation:animation forKey:@"transform"];
+				// set final state
+				NSValue* toValue = [animation.values lastObject];
+				[layer setTransform:[toValue CATransform3DValue]];
+				
+				// Commit the transaction
+				[CATransaction commit];
 			}
         }
 		else if (![self isAnimating])
