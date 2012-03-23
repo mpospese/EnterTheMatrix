@@ -153,9 +153,6 @@
 		[self.contentView.layer setTransform:[self.transform transform3D]];
 	else
 		[self.contentView setTransform:[self.transform affineTransform]];
-	NSLog(@"R Frame =  %@", NSStringFromCGRect(self.contentView.frame));
-	NSLog(@"R Bounds = %@", NSStringFromCGRect(self.contentView.bounds));
-	NSLog(@"R Center = %@\n", NSStringFromCGPoint(self.contentView.center));
 }
 
 #pragma mark - Button handlers
