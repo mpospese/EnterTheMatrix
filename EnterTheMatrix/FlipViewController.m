@@ -319,90 +319,18 @@
 			if (shouldFallBack != [self isFlipFrontPage])
 			{
 				// 2-stage animation (we're swiping either forward or back)
-				// We'll pro-rate the delay for the first half of the animation based on our current position
 				CGFloat progress = [self progressFromPosition:currentPosition];
 				if (([self isFlipFrontPage] && progress > 1) || (![self isFlipFrontPage] && progress < 1))
 					progress = 1;
-				NSTimeInterval duration = ([self isFlipFrontPage]? (1- progress) : (progress - 1)) * DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5);
-
-				[UIView animateWithDuration:duration delay:0 options:UIViewAnimationCurveLinear animations:^{
-					// animate up to middle position
-					if (shouldFallBack)
-						[self doFlip2:0];
-					else
-						[self doFlip1:1];
-				} completion:^(BOOL finished) {
-					// run the 2nd half of the animation
-					[self setFlipFrontPage:shouldFallBack];
-					self.pageFront.hidden = !shouldFallBack;
-					self.pageBack.hidden = shouldFallBack;
-					
-					[UIView animateWithDuration:DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5) delay:0 options:UIViewAnimationCurveEaseOut animations:^{
-						if (shouldFallBack)
-							[self doFlip1:0];
-						else
-							[self doFlip2:1];
-					} completion:^(BOOL finished) {
-						
-						[self endFlip:!shouldFallBack];
-						
-						// Clear flags
-						[self setAnimating:NO];
-						[self setPanning:NO];
-					}];
-				}];
+				[self animateFlip1:shouldFallBack fromProgress:progress];
 			}
 			else
 			{
 				// 1-stage animation
-				CALayer *layer = shouldFallBack? self.pageFront.layer : self.pageBack.layer;
-				
-				// Figure out how many frames we want
-				CGFloat duration = DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5);
-				NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
-				
-				// Build an array of keyframes (each a single transform)
-				NSMutableArray* array = [NSMutableArray arrayWithCapacity:frameCount + 1];
-				CGFloat progress;
 				CGFloat fromProgress = [self progressFromPosition:currentPosition];
 				if (!shouldFallBack)
 					fromProgress -= 1;
-				CGFloat toProgress = shouldFallBack? 0 : 1;
-				
-				for (int frame = 0; frame <= frameCount; frame++)
-				{
-					progress = fromProgress + (toProgress - fromProgress) * ((float)frame) / frameCount;
-					[array addObject:[NSValue valueWithCATransform3D:shouldFallBack? [self flipTransform1:progress] : [self flipTransform2:progress]]];
-				}
-				
-				// Create a transaction
-				[CATransaction begin];
-				[CATransaction setValue:[NSNumber numberWithFloat:duration] forKey:kCATransactionAnimationDuration];
-				[CATransaction setValue:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut] forKey:kCATransactionAnimationTimingFunction];
-				[CATransaction setCompletionBlock:^{
-					// once 2nd half completes
-					[self endFlip:!shouldFallBack];
-					
-					// Clear flags
-					[self setAnimating:NO];
-					[self setPanning:NO];
-				}];
-				
-				// Create the animation
-				// (we're animating transform property)
-				CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; 
-				// set our keyframe values
-				[animation setValues:[NSArray arrayWithArray:array]]; 		
-				[animation setRemovedOnCompletion:YES];
-				
-				// add the animation
-				[layer addAnimation:animation forKey:@"transform"];
-				// set final state
-				NSValue* toValue = [animation.values lastObject];
-				[layer setTransform:[toValue CATransform3DValue]];
-				
-				// Commit the transaction
-				[CATransaction commit];
+				[self animateFlip2:shouldFallBack fromProgress:fromProgress];
 			}
         }
 		else if (![self isAnimating])
@@ -474,19 +402,26 @@
 	[self setAnimating:YES];
 	[self startFlipWithDirection:aDirection orientation:anOrientation];
 	
+	[self animateFlip1:NO fromProgress:0];
+}
+
+- (void)animateFlip1:(BOOL)shouldFallBack fromProgress:(CGFloat)fromProgress
+{
+	// 2-stage animation
+	CALayer *layer = shouldFallBack? self.pageBack.layer : self.pageFront.layer;
+	CGFloat progress;
+	CGFloat toProgress = shouldFallBack? 0 : 1;
+
 	// Figure out how many frames we want
-	CGFloat duration = DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5);
+	CGFloat duration = DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5) * abs(toProgress - fromProgress);
 	NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
 	
 	// Build an array of keyframes (each a single transform)
 	NSMutableArray* array = [NSMutableArray arrayWithCapacity:frameCount + 1];
-	NSMutableArray* array2 = [NSMutableArray arrayWithCapacity:frameCount + 1];
-	CGFloat progress;
 	for (int frame = 0; frame <= frameCount; frame++)
 	{
-		progress = ((float)frame) / frameCount;
-		[array addObject:[NSValue valueWithCATransform3D:[self flipTransform1:progress]]];
-		[array2 addObject:[NSValue valueWithCATransform3D:[self flipTransform2:progress]]];
+		progress = fromProgress + (toProgress - fromProgress) * ((float)frame) / frameCount;
+		[array addObject:[NSValue valueWithCATransform3D:shouldFallBack? [self flipTransform2:progress] : [self flipTransform1:progress]]];
 	}
 	
 	// Create a transaction
@@ -495,37 +430,13 @@
 	[CATransaction setValue:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn] forKey:kCATransactionAnimationTimingFunction];
 	[CATransaction setCompletionBlock:^{
 		// 2nd half of animation, once 1st half completes
-		[self setFlipFrontPage:NO];
-		self.pageFront.hidden = YES;
-		self.pageBack.hidden = NO;
+		[self setFlipFrontPage:shouldFallBack];
+		self.pageFront.hidden = !shouldFallBack;
+		self.pageBack.hidden = shouldFallBack;
 		
-		// Create a transaction
-		[CATransaction begin];
-		[CATransaction setValue:[NSNumber numberWithFloat:duration] forKey:kCATransactionAnimationDuration];
-		[CATransaction setValue:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut] forKey:kCATransactionAnimationTimingFunction];
-		[CATransaction setCompletionBlock:^{
-			// once 2nd half completes
-			[self endFlip:YES];
-			[self setAnimating:NO];
-		}];
-		
-		// Create the animation
-		// (we're animating transform property)
-		CAKeyframeAnimation *animation2 = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; 
-		// set our keyframe values
-		[animation2 setValues:[NSArray arrayWithArray:array2]]; 		
-		[animation2 setRemovedOnCompletion:YES];
-		
-		// add the animation
-		[self.pageBack.layer addAnimation:animation2 forKey:@"transform2"];
-		// set final state
-		NSValue* toValue = [animation2.values lastObject];
-		[self.pageBack.layer setTransform:[toValue CATransform3DValue]];
-		
-		// Commit the transaction
-		[CATransaction commit];
+		[self animateFlip2:shouldFallBack fromProgress:shouldFallBack? 1 : 0];
 	}];
-		
+	
 	// Create the animation
 	// (we're animating transform property)
 	CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; 
@@ -534,11 +445,61 @@
 	[animation setRemovedOnCompletion:YES];
 	
 	// add the animation
-	[self.pageFront.layer addAnimation:animation forKey:@"transform1"];
+	[layer addAnimation:animation forKey:@"transform1"];
 	// set final state
 	NSValue* toValue = [animation.values lastObject];
-	[self.pageFront.layer setTransform:[toValue CATransform3DValue]];
+	[layer setTransform:[toValue CATransform3DValue]];
+	
+	// Commit the transaction
+	[CATransaction commit];
+}
 
+- (void)animateFlip2:(BOOL)shouldFallBack fromProgress:(CGFloat)fromProgress
+{
+	// 1-stage animation
+	CALayer *layer = shouldFallBack? self.pageFront.layer : self.pageBack.layer;
+	
+	// Figure out how many frames we want
+	CGFloat duration = DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5);
+	NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
+	
+	// Build an array of keyframes (each a single transform)
+	NSMutableArray* array = [NSMutableArray arrayWithCapacity:frameCount + 1];
+	CGFloat progress;
+	CGFloat toProgress = shouldFallBack? 0 : 1;
+	
+	for (int frame = 0; frame <= frameCount; frame++)
+	{
+		progress = fromProgress + (toProgress - fromProgress) * ((float)frame) / frameCount;
+		[array addObject:[NSValue valueWithCATransform3D:shouldFallBack? [self flipTransform1:progress] : [self flipTransform2:progress]]];
+	}
+	
+	// Create a transaction
+	[CATransaction begin];
+	[CATransaction setValue:[NSNumber numberWithFloat:duration] forKey:kCATransactionAnimationDuration];
+	[CATransaction setValue:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut] forKey:kCATransactionAnimationTimingFunction];
+	[CATransaction setCompletionBlock:^{
+		// once 2nd half completes
+		[self endFlip:!shouldFallBack];
+		
+		// Clear flags
+		[self setAnimating:NO];
+		[self setPanning:NO];
+	}];
+	
+	// Create the animation
+	// (we're animating transform property)
+	CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; 
+	// set our keyframe values
+	[animation setValues:[NSArray arrayWithArray:array]]; 		
+	[animation setRemovedOnCompletion:YES];
+	
+	// add the animation
+	[layer addAnimation:animation forKey:@"transform"];
+	// set final state
+	NSValue* toValue = [animation.values lastObject];
+	[layer setTransform:[toValue CATransform3DValue]];
+	
 	// Commit the transaction
 	[CATransaction commit];
 }
