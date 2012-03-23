@@ -527,24 +527,42 @@
 
  - (void)doFlip1:(CGFloat)progress
 {
-	BOOL isForward = (direction == FlipDirectionForward);
-	BOOL isVertical = (orientation == FlipOrientationVertical);
-	CATransform3D tHalf1 = CATransform3DIdentity;
-	tHalf1.m34 = [self skew] * sinf(radians(90 * progress));
-	tHalf1 = CATransform3DRotate(tHalf1, radians(ANGLE * progress * (isForward? -1 : 1)), isVertical? -1 : 0, isVertical? 0 : 1, 0); // rotate away from viewer
-	self.pageFront.layer.transform = tHalf1;
+	[self.pageFront.layer setTransform:[self flipTransform1:progress]];
 }
  
  - (void)doFlip2:(CGFloat)progress
 {
-	BOOL isForward = (direction == FlipDirectionForward);
-	BOOL isVertical = (orientation == FlipOrientationVertical);
-	CATransform3D tHalf2 = CATransform3DIdentity;
-	tHalf2.m34 = [self skew] * cosf(radians(90 * progress));
-	tHalf2 = CATransform3DRotate(tHalf2, radians(ANGLE * (1 - progress)) * (isForward? 1 : -1), isVertical? -1 : 0, isVertical? 0 : 1, 0); // rotate away from viewer
-	self.pageBack.layer.transform = tHalf2;
+	[self.pageBack.layer setTransform:[self flipTransform2:progress]];
 }
 	 
+- (CATransform3D)flipTransform1:(CGFloat)progress
+{
+	CATransform3D tHalf1 = CATransform3DIdentity;
+
+	// set skew for perspective
+	tHalf1.m34 = [self skew] * sinf(radians(90 * progress));
+	// rotate away from viewer
+	BOOL isForward = (direction == FlipDirectionForward);
+	BOOL isVertical = (orientation == FlipOrientationVertical);
+	tHalf1 = CATransform3DRotate(tHalf1, radians(ANGLE * progress * (isForward? -1 : 1)), isVertical? -1 : 0, isVertical? 0 : 1, 0);
+	
+	return tHalf1;
+}
+
+- (CATransform3D)flipTransform2:(CGFloat)progress
+{
+	CATransform3D tHalf2 = CATransform3DIdentity;
+
+	// set skew for perspective
+	tHalf2.m34 = [self skew] * cosf(radians(90 * progress));
+	// rotate away from viewer
+	BOOL isForward = (direction == FlipDirectionForward);
+	BOOL isVertical = (orientation == FlipOrientationVertical);
+	tHalf2 = CATransform3DRotate(tHalf2, radians(ANGLE * (1 - progress)) * (isForward? 1 : -1), isVertical? -1 : 0, isVertical? 0 : 1, 0);
+
+	return tHalf2;
+}
+
 - (void)endFlip:(BOOL)completed
 {
 	[self.pageFront removeFromSuperview];
