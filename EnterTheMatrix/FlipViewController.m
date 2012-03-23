@@ -22,9 +22,25 @@
 
 @interface FlipViewController ()
 
+@property(assign, nonatomic) int currentImageIndex;
+@property(assign, nonatomic) FlipDirection direction;
+@property(assign, nonatomic) FlipOrientation orientation;
+@property(assign, nonatomic, getter = isFlipFrontPage) BOOL flipFrontPage;
+@property(assign, nonatomic, getter = isAnimating) BOOL animating;
+@property(assign, nonatomic, getter = isPanning) BOOL panning;
+@property(assign, nonatomic) CGPoint panStart;
+
 @end
 
 @implementation FlipViewController
+
+@synthesize currentImageIndex;
+@synthesize direction;
+@synthesize orientation;
+@synthesize flipFrontPage;
+@synthesize animating;
+@synthesize panning;
+@synthesize panStart;
 @synthesize contentView;
 @synthesize imageView;
 @synthesize speedSwitch;
@@ -151,7 +167,7 @@
 
 - (void)handleSwipe:(UIGestureRecognizer *)gestureRecognizer
 {
-	if (isAnimating || isPanning)
+	if ([self isAnimating] || [self isPanning])
 		return;
 	
 	UISwipeGestureRecognizer *swipeGesture = (UISwipeGestureRecognizer *)gestureRecognizer;
@@ -178,7 +194,7 @@
 
 - (void)handleTap:(UIGestureRecognizer *)gestureRecognizer
 {
-	if (isAnimating || isPanning)
+	if ([self isAnimating] || [self isPanning])
 		return;
 	
 	CGPoint tapPoint = [gestureRecognizer locationInView:self.contentView];
@@ -217,7 +233,7 @@
 	
 	if (state == UIGestureRecognizerStateBegan)
 	{
-		if (isAnimating)
+		if ([self isAnimating])
 			return;
 		
 		// See if touch started near one of the edges, in which case we'll pan a page turn
@@ -235,27 +251,27 @@
 			return;
 		}
 		
-		isAnimating = YES;
-		isPanning = YES;
+		[self setAnimating:YES];
+		[self setPanning:YES];
 		panStart = currentPosition;
 	}
 	
-	if (isPanning && state == UIGestureRecognizerStateChanged)
+	if ([self isPanning] && state == UIGestureRecognizerStateChanged)
 	{
 		CGFloat progress = [self progressFromPosition:currentPosition];
-		BOOL wasFlipFrontPage = isFlipFrontPage;
-		isFlipFrontPage = progress < 1;
-		if (wasFlipFrontPage != isFlipFrontPage)
+		BOOL wasFlipFrontPage = [self isFlipFrontPage];
+		[self setFlipFrontPage:progress < 1];
+		if (wasFlipFrontPage != [self isFlipFrontPage])
 		{
 			// switching between the 2 halves of the animation - between front and back sides of the page we're turning
-			if (isFlipFrontPage)
+			if ([self isFlipFrontPage])
 			{
 				[self doFlip2:0];
 			}
-			[self.pageFront setHidden:!isFlipFrontPage];
-			[self.pageBack setHidden:isFlipFrontPage];
+			[self.pageFront setHidden:![self isFlipFrontPage]];
+			[self.pageBack setHidden:[self isFlipFrontPage]];
 		}
-		if (isFlipFrontPage)
+		if ([self isFlipFrontPage])
 			[self doFlip1:progress];
 		else
 			[self doFlip2:progress - 1];
@@ -265,10 +281,10 @@
 	{
 		CGPoint vel = [gestureRecognizer velocityInView:gestureRecognizer.view];
 		
-		if (isPanning)
+		if ([self isPanning])
         {
 			// If moving slowly, let page fall either forward or back depending on where we were
-			BOOL shouldFallBack = isFlipFrontPage;
+			BOOL shouldFallBack = [self isFlipFrontPage];
 			
 			// But, if user was swiping in an appropriate direction, go ahead and honor that
 			if (orientation == FlipOrientationHorizontal)
@@ -299,14 +315,14 @@
 			}
 			
 			// finishAnimation
-			if (shouldFallBack != isFlipFrontPage)
+			if (shouldFallBack != [self isFlipFrontPage])
 			{
 				// 2-stage animation (we're swiping either forward or back)
 				// We'll pro-rate the delay for the first half of the animation based on our current position
 				CGFloat progress = [self progressFromPosition:currentPosition];
-				if ((isFlipFrontPage && progress > 1) || (!isFlipFrontPage && progress < 1))
+				if (([self isFlipFrontPage] && progress > 1) || (![self isFlipFrontPage] && progress < 1))
 					progress = 1;
-				NSTimeInterval duration = (isFlipFrontPage? (1- progress) : (progress - 1)) * 0.5 * ([self.speedSwitch isOn]? 1 : 5);
+				NSTimeInterval duration = ([self isFlipFrontPage]? (1- progress) : (progress - 1)) * 0.5 * ([self.speedSwitch isOn]? 1 : 5);
 
 				[UIView animateWithDuration:duration delay:0 options:UIViewAnimationCurveLinear animations:^{
 					// animate up to middle position
@@ -316,7 +332,7 @@
 						[self doFlip1:1];
 				} completion:^(BOOL finished) {
 					// run the 2nd half of the animation
-					isFlipFrontPage = shouldFallBack;
+					[self setFlipFrontPage:shouldFallBack];
 					self.pageFront.hidden = !shouldFallBack;
 					self.pageBack.hidden = shouldFallBack;
 					
@@ -330,8 +346,8 @@
 						[self endFlip:!shouldFallBack];
 						
 						// Clear flags
-						isAnimating = NO;
-						isPanning = NO;
+						[self setAnimating:NO];
+						[self setPanning:NO];
 					}];
 				}];
 			}
@@ -348,12 +364,12 @@
 					[self endFlip:!shouldFallBack];
 					
 					// Clear flags
-					isAnimating = NO;
-					isPanning = NO;
+					[self setAnimating:NO];
+					[self setPanning:NO];
 				}];
 			}
         }
-		else if (!isAnimating)
+		else if (![self isAnimating])
 		{
 			// we weren't panning (because touch didn't start near any margin) but test for swipe
 			if (vel.x < SWIPE_LEFT_THRESHOLD)
@@ -385,7 +401,7 @@
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
 	// don't recognize any further gestures if we're in the middle of animating a page-turn
-	if (isAnimating)
+	if ([self isAnimating])
 		return NO;
 	
 	// don't recognize swipe on a slider!
@@ -402,24 +418,24 @@
 
 - (UIImage *)currentImage
 {
-	return [UIImage imageNamed:[NSString stringWithFormat:@"matrix_%02d", currentImage + 1]];
+	return [UIImage imageNamed:[NSString stringWithFormat:@"matrix_%02d", [self currentImageIndex] + 1]];
 }
 
 - (UIImage *)prevImage
 {
-	int prevIndex = (currentImage + (IMAGE_COUNT - 1)) % IMAGE_COUNT;
+	int prevIndex = ([self currentImageIndex] + (IMAGE_COUNT - 1)) % IMAGE_COUNT;
 	return [UIImage imageNamed:[NSString stringWithFormat:@"matrix_%02d", prevIndex + 1]];
 }
 
 - (UIImage *)nextImage
 {
-	int nextIndex = (currentImage + 1) % IMAGE_COUNT;
+	int nextIndex = ([self currentImageIndex] + 1) % IMAGE_COUNT;
 	return [UIImage imageNamed:[NSString stringWithFormat:@"matrix_%02d", nextIndex + 1]];
 }
 
 - (void)performFlipWithDirection:(FlipDirection)aDirection orientation:(FlipOrientation)anOrientation
 {
-	isAnimating = YES;
+	[self setAnimating:YES];
 	[self startFlipWithDirection:aDirection orientation:anOrientation];
 	
 	[UIView animateWithDuration:[self.speedSwitch isOn]? 0.5 : 2.5 delay:0 options:UIViewAnimationCurveEaseIn animations:^{
@@ -427,7 +443,7 @@
 		[self doFlip1:1.0];
 		
 	} completion:^(BOOL finished) {
-		isFlipFrontPage = NO;
+		[self setFlipFrontPage:NO];
 		self.pageFront.hidden = YES;
 		self.pageBack.hidden = NO;
 		[UIView animateWithDuration:[self.speedSwitch isOn]? 0.5 : 2.5 delay:0 options:UIViewAnimationCurveEaseOut animations:^{
@@ -436,7 +452,7 @@
 			
 		} completion:^(BOOL finished) {
 			[self endFlip:YES];
-			isAnimating = NO;
+			[self setAnimating:NO];
 		}];
 	}];
 }
@@ -445,7 +461,7 @@
 {
 	direction = aDirection;
 	orientation = anOrientation;
-	isFlipFrontPage = YES;
+	[self setFlipFrontPage:YES];
 	
 	BOOL isForward = (direction == FlipDirectionForward);
 	BOOL isVertical = (orientation == FlipOrientationVertical);
@@ -541,11 +557,9 @@
 	if (completed)
 	{
 		if (direction == FlipDirectionForward)
-			currentImage++;
+			[self setCurrentImageIndex:([self currentImageIndex] + 1) % IMAGE_COUNT];
 		else
-			currentImage += IMAGE_COUNT - 1;
-		
-		currentImage = currentImage % IMAGE_COUNT;
+			[self setCurrentImageIndex:([self currentImageIndex] + IMAGE_COUNT - 1) % IMAGE_COUNT];
 	}
 	else
 		self.imageView.image = [self currentImage];

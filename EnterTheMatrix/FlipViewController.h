@@ -19,16 +19,6 @@ typedef enum {
 } FlipDirection;
 
 @interface FlipViewController : UIViewController<UIGestureRecognizerDelegate>
-{
-	int currentImage;
-	FlipDirection direction;
-	FlipOrientation orientation;
-	
-	BOOL isFlipFrontPage;
-	BOOL isAnimating;
-	BOOL isPanning;
-	CGPoint panStart;
-}
 
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
