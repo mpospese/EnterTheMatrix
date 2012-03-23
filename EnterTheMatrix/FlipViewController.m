@@ -11,6 +11,7 @@
 #import "MPAnimation.h"
 
 #define IMAGE_COUNT 4
+#define DEFAULT_DURATION 0.3
 #define DEFAULT_SKEW	-(1. / 1000.)
 #define ANGLE	90
 #define MARGIN	72
@@ -322,7 +323,7 @@
 				CGFloat progress = [self progressFromPosition:currentPosition];
 				if (([self isFlipFrontPage] && progress > 1) || (![self isFlipFrontPage] && progress < 1))
 					progress = 1;
-				NSTimeInterval duration = ([self isFlipFrontPage]? (1- progress) : (progress - 1)) * 0.5 * ([self.speedSwitch isOn]? 1 : 5);
+				NSTimeInterval duration = ([self isFlipFrontPage]? (1- progress) : (progress - 1)) * DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5);
 
 				[UIView animateWithDuration:duration delay:0 options:UIViewAnimationCurveLinear animations:^{
 					// animate up to middle position
@@ -336,7 +337,7 @@
 					self.pageFront.hidden = !shouldFallBack;
 					self.pageBack.hidden = shouldFallBack;
 					
-					[UIView animateWithDuration:[self.speedSwitch isOn]? 0.5 : 2.5 delay:0 options:UIViewAnimationCurveEaseOut animations:^{
+					[UIView animateWithDuration:DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5) delay:0 options:UIViewAnimationCurveEaseOut animations:^{
 						if (shouldFallBack)
 							[self doFlip1:0];
 						else
@@ -354,7 +355,7 @@
 			else
 			{
 				// 1-stage animation
-				[UIView animateWithDuration:[self.speedSwitch isOn]? 0.5 : 2.5 delay:0 options:UIViewAnimationCurveEaseOut animations:^{
+				[UIView animateWithDuration:DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5) delay:0 options:UIViewAnimationCurveEaseOut animations:^{
 					if (shouldFallBack)
 						[self doFlip1:0];
 					else
@@ -439,7 +440,7 @@
 	[self startFlipWithDirection:aDirection orientation:anOrientation];
 	
 	// Figure out how many frames we want
-	CGFloat duration = [self.speedSwitch isOn]? 0.5 : 2.5;
+	CGFloat duration = DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5);
 	NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
 	
 	// Build an array of keyframes (each a single transform)
