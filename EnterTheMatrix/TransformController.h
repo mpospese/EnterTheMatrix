@@ -8,11 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "MPTransform.h"
+#import "AnchorPointTable.h"
 
 #define TRANSFORM_LABEL_TAG				700
 #define TRANSFORM_CONTAINER_TAG			701
 
-@interface TransformController : UIViewController
+@interface TransformController : UIViewController<AnchorPointDelegate>
 {
 	BOOL _observerAdded;
 	CGPoint lastPoint;
@@ -23,16 +24,24 @@
 @property (strong, nonatomic) MPTransform *transform;
 @property(nonatomic, strong) UIPopoverController *popover;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
+@property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (readonly, nonatomic) BOOL is3D;
 @property (readonly, nonatomic) NSString *imageName;
+@property (assign, nonatomic) AnchorPointLocation anchorPoint;
 
 - (IBAction)transformPressed:(id)sender;
 - (IBAction)resetPressed:(id)sender;
 - (IBAction)infoPressed:(id)sender;
+- (IBAction)anchorPressed:(id)sender;
 
 - (UIView *)makeContainer;
 - (UILabel *)makeLabel;
 - (void)setText:(NSString *)text forLabel:(UILabel *)label;
 - (void)positionLabel:(UILabel *)label aboveGesture:(UIGestureRecognizer *)gestureRecognizer;
 - (void)updateTransform;
+
+#pragma mark - AnchorPointDelegate
+
+- (void)anchorPointDidChange:(AnchorPointLocation)newAnchorPoint;
+
 @end

@@ -678,6 +678,11 @@ www.glyphish.com</string>
                                             <action selector="transformPressed:" destination="2" id="aP2-eq-peH"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem image="Anchor.png" style="plain" id="oPf-AD-erR">
+                                        <connections>
+                                            <action selector="anchorPressed:" destination="2" id="Gac-xc-bRD"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem title="Reset" id="2eW-pw-n8J">
                                         <connections>
                                             <action selector="resetPressed:" destination="2" id="x81-uT-cLL"/>
@@ -695,6 +700,9 @@ www.glyphish.com</string>
                         <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="CGAffineTransform" image="Bacon.png" id="7"/>
+                    <connections>
+                        <outlet property="toolbar" destination="20" id="E0J-Uw-UNT"/>
+                    </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="3042" y="1310"/>
@@ -721,6 +729,11 @@ www.glyphish.com</string>
                                             <action selector="transformPressed:" destination="3" id="LR7-Q0-vSu"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem image="Anchor.png" style="plain" id="Ozj-sF-Tu5">
+                                        <connections>
+                                            <action selector="anchorPressed:" destination="3" id="6l3-BF-gg4"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem title="Reset" id="h3J-3z-iA5">
                                         <connections>
                                             <action selector="resetPressed:" destination="3" id="Qgd-MV-aKh"/>
@@ -738,6 +751,9 @@ www.glyphish.com</string>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="CATransform3D" image="Sword.png" id="6"/>
+                    <connections>
+                        <outlet property="toolbar" destination="xz3-fS-ToR" id="7Fj-Ry-5I7"/>
+                    </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="3041" y="2470"/>
@@ -1159,6 +1175,193 @@ www.glyphish.com</string>
             </objects>
             <point key="canvasLocation" x="3042" y="3621"/>
         </scene>
+        <!--Anchor Point Table-->
+        <scene sceneID="73d-2i-0Ej">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="skd-e3-bT3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tableViewController storyboardIdentifier="AnchorPopover" id="hdV-sS-MIp" customClass="AnchorPointTable" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="TEF-t4-i7a">
+                        <rect key="frame" x="0.0" y="20" width="320" height="832"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <sections>
+                            <tableViewSection id="zz8-tz-dd9">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="Y3D-NP-uQv" style="IBUITableViewCellStyleDefault" id="vmF-gF-2DW">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Top Left" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Y3D-NP-uQv">
+                                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="6Cn-uu-fwZ" style="IBUITableViewCellStyleDefault" id="y05-HV-Idv">
+                                        <rect key="frame" x="0.0" y="44" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Top Center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6Cn-uu-fwZ">
+                                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="Y4A-Vu-P3A" style="IBUITableViewCellStyleDefault" id="A3E-B5-6tC">
+                                        <rect key="frame" x="0.0" y="88" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Top Right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Y4A-Vu-P3A">
+                                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="wsj-nH-lSF" style="IBUITableViewCellStyleDefault" id="wmc-pb-3w8">
+                                        <rect key="frame" x="0.0" y="132" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Middle Left" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="wsj-nH-lSF">
+                                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="DEL-Fk-yrb" style="IBUITableViewCellStyleDefault" id="FHP-AI-89t">
+                                        <rect key="frame" x="0.0" y="176" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="DEL-Fk-yrb">
+                                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="eKh-Gq-ARb" style="IBUITableViewCellStyleDefault" id="RSC-BP-wra">
+                                        <rect key="frame" x="0.0" y="220" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Middle Right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eKh-Gq-ARb">
+                                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="E02-qh-CtE" style="IBUITableViewCellStyleDefault" id="9p6-AR-hx8">
+                                        <rect key="frame" x="0.0" y="264" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Bottom Left" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="E02-qh-CtE">
+                                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="YMH-4o-oCO" style="IBUITableViewCellStyleDefault" id="oV0-ne-yZX">
+                                        <rect key="frame" x="0.0" y="308" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Bottom Center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="YMH-4o-oCO">
+                                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="8xn-Cf-b3x" style="IBUITableViewCellStyleDefault" id="lLD-DY-Eir">
+                                        <rect key="frame" x="0.0" y="352" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Bottom Right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8xn-Cf-b3x">
+                                                    <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="hdV-sS-MIp" id="Y6u-DD-FCI"/>
+                            <outlet property="delegate" destination="hdV-sS-MIp" id="K8Y-nr-CQG"/>
+                        </connections>
+                    </tableView>
+                    <splitViewMasterSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                </tableViewController>
+            </objects>
+            <point key="canvasLocation" x="3928" y="1310"/>
+        </scene>
         <!--Grid View Controller - Quartz 2D-->
         <scene sceneID="mbr-37-IvK">
             <objects>
@@ -1402,6 +1605,7 @@ www.glyphish.com</string>
         </scene>
     </scenes>
     <resources>
+        <image name="Anchor.png" width="28" height="29"/>
         <image name="Bacon.png" width="21" height="29"/>
         <image name="Blueprint - iPad.png" width="1024" height="1024"/>
         <image name="Book.png" width="18" height="26"/>
@@ -1416,128 +1620,6 @@ www.glyphish.com</string>
         <image name="matrix_01.png" width="480" height="360"/>
         <image name="matrix_02.png" width="480" height="360"/>
     </resources>
-    <classes>
-        <class className="Arc" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/Arc.h"/>
-        </class>
-        <class className="BasicAnimationViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/BasicAnimationViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="animationChanged:"/>
-                <relationship kind="action" name="goPressed:"/>
-                <relationship kind="outlet" name="bar" candidateClass="UIView"/>
-                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
-                <relationship kind="outlet" name="modeSegment" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="rotateLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="rotateSwitch" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="scaleLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="scaleSwitch" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="speedSwitch" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="translateLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="translateSwitch" candidateClass="UISwitch"/>
-            </relationships>
-        </class>
-        <class className="CATransformController" superclassName="TransformController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/CATransformController.h"/>
-        </class>
-        <class className="CGAffineController" superclassName="TransformController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/CGAffineController.h"/>
-        </class>
-        <class className="FlipViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlipViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="skewValueChanged:"/>
-                <relationship kind="outlet" name="contentView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
-                <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="skewLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="skewSlider" candidateClass="UISlider"/>
-                <relationship kind="outlet" name="speedSwitch" candidateClass="UISwitch"/>
-            </relationships>
-        </class>
-        <class className="FoldViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FoldViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="bottomBar" candidateClass="UIView"/>
-                <relationship kind="outlet" name="centerBar" candidateClass="UIView"/>
-                <relationship kind="outlet" name="contentView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
-                <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
-                <relationship kind="outlet" name="skewSegment" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="topBar" candidateClass="UIView"/>
-            </relationships>
-        </class>
-        <class className="GridView" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/GridView.h"/>
-        </class>
-        <class className="GridViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/GridViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="lockPressed:"/>
-                <relationship kind="action" name="resetPressed:"/>
-                <relationship kind="action" name="rotateHorzChanged:"/>
-                <relationship kind="action" name="rotateVertChanged:"/>
-                <relationship kind="action" name="scaleHorzChanged:"/>
-                <relationship kind="action" name="scaleVertChanged:"/>
-                <relationship kind="action" name="translateHorzChanged:"/>
-                <relationship kind="action" name="translateVertChanged:"/>
-                <relationship kind="outlet" name="grid" candidateClass="GridView"/>
-                <relationship kind="outlet" name="horizontalPanel" candidateClass="UIView"/>
-                <relationship kind="outlet" name="lockButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="resetButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="verticalPanel" candidateClass="UIView"/>
-            </relationships>
-        </class>
-        <class className="InfoView" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/InfoView.h"/>
-            <relationships>
-                <relationship kind="outlet" name="label" candidateClass="UITextView"/>
-            </relationships>
-        </class>
-        <class className="KeyframeViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/KeyframeViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="arcPositionValueChanged:"/>
-                <relationship kind="outlet" name="arc" candidateClass="Arc"/>
-                <relationship kind="outlet" name="arcPositionSegment" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="bottomLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
-                <relationship kind="outlet" name="modeSegment" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="speedSwitch" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="topLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-        <class className="TransformController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TransformController.h"/>
-            <relationships>
-                <relationship kind="action" name="infoPressed:"/>
-                <relationship kind="action" name="resetPressed:"/>
-                <relationship kind="action" name="transformPressed:"/>
-                <relationship kind="outlet" name="contentView" candidateClass="UIView"/>
-            </relationships>
-        </class>
-        <class className="TransformTable" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TransformTable.h"/>
-            <relationships>
-                <relationship kind="action" name="resetRotationPressed:"/>
-                <relationship kind="action" name="resetScalePressed:"/>
-                <relationship kind="action" name="resetSkewPressed:"/>
-                <relationship kind="action" name="resetTranslatePressed:"/>
-                <relationship kind="action" name="rotateXChanged:"/>
-                <relationship kind="action" name="rotateYChanged:"/>
-                <relationship kind="action" name="rotateZChanged:"/>
-                <relationship kind="action" name="rotationAngleChanged:"/>
-                <relationship kind="action" name="scaleLockPressed:"/>
-                <relationship kind="action" name="scaleXChanged:"/>
-                <relationship kind="action" name="scaleYChanged:"/>
-                <relationship kind="action" name="scaleZChanged:"/>
-                <relationship kind="action" name="skewChanged:"/>
-                <relationship kind="action" name="translateXChanged:"/>
-                <relationship kind="action" name="translateYChanged:"/>
-                <relationship kind="action" name="translateZChanged:"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

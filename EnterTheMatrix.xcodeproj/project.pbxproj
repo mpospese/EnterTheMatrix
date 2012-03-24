@@ -14,6 +14,11 @@
 		4D177E3915037A250046AD1C /* GridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D177E3815037A250046AD1C /* GridView.m */; };
 		4D177E401504D7330046AD1C /* GridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D177E3F1504D7330046AD1C /* GridViewController.m */; };
 		4D40BDBB150CC23700970F2D /* Arc.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D40BDBA150CC23700970F2D /* Arc.m */; };
+		4D56F73E151DC5480040C70D /* Anchor.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D56F73C151DC5480040C70D /* Anchor.png */; };
+		4D56F73F151DC5480040C70D /* Anchor@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D56F73D151DC5480040C70D /* Anchor@2x.png */; };
+		4D56F747151DC80E0040C70D /* AnchorPointTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D56F746151DC80E0040C70D /* AnchorPointTable.m */; };
+		4D56F74D151DD22A0040C70D /* Dot@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D56F74B151DD22A0040C70D /* Dot@2x.png */; };
+		4D56F74E151DD22A0040C70D /* Dot.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D56F74C151DD22A0040C70D /* Dot.png */; };
 		4D63B8C1150B6C0F00FA4482 /* FlipViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D63B8C0150B6C0F00FA4482 /* FlipViewController.m */; };
 		4D63B8C6150B6F8600FA4482 /* matrix_01.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D63B8C2150B6F8600FA4482 /* matrix_01.png */; };
 		4D63B8C7150B6F8600FA4482 /* matrix_02.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D63B8C3150B6F8600FA4482 /* matrix_02.png */; };
@@ -79,6 +84,12 @@
 		4D177E3F1504D7330046AD1C /* GridViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GridViewController.m; sourceTree = "<group>"; };
 		4D40BDB9150CC23700970F2D /* Arc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Arc.h; sourceTree = "<group>"; };
 		4D40BDBA150CC23700970F2D /* Arc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Arc.m; sourceTree = "<group>"; };
+		4D56F73C151DC5480040C70D /* Anchor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Anchor.png; sourceTree = "<group>"; };
+		4D56F73D151DC5480040C70D /* Anchor@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Anchor@2x.png"; sourceTree = "<group>"; };
+		4D56F745151DC80E0040C70D /* AnchorPointTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnchorPointTable.h; sourceTree = "<group>"; };
+		4D56F746151DC80E0040C70D /* AnchorPointTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnchorPointTable.m; sourceTree = "<group>"; };
+		4D56F74B151DD22A0040C70D /* Dot@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dot@2x.png"; sourceTree = "<group>"; };
+		4D56F74C151DD22A0040C70D /* Dot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Dot.png; sourceTree = "<group>"; };
 		4D63B8BF150B6C0F00FA4482 /* FlipViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlipViewController.h; sourceTree = "<group>"; };
 		4D63B8C0150B6C0F00FA4482 /* FlipViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlipViewController.m; sourceTree = "<group>"; };
 		4D63B8C2150B6F8600FA4482 /* matrix_01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = matrix_01.png; sourceTree = "<group>"; };
@@ -236,6 +247,8 @@
 				4DBE7B6914FCE557008174E8 /* MPTransform.m */,
 				4D40BDB9150CC23700970F2D /* Arc.h */,
 				4D40BDBA150CC23700970F2D /* Arc.m */,
+				4D56F745151DC80E0040C70D /* AnchorPointTable.h */,
+				4D56F746151DC80E0040C70D /* AnchorPointTable.m */,
 			);
 			path = EnterTheMatrix;
 			sourceTree = "<group>";
@@ -255,6 +268,8 @@
 		4DBE7B5014FB9458008174E8 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				4D56F74B151DD22A0040C70D /* Dot@2x.png */,
+				4D56F74C151DD22A0040C70D /* Dot.png */,
 				4D6E91EF1511FCEE00B7D1D1 /* Blueprint - iPad.png */,
 				4DBE7B7E14FD16DE008174E8 /* Lock.png */,
 				4DBE7B7F14FD16DE008174E8 /* Lock@2x.png */,
@@ -262,12 +277,14 @@
 				4DBE7B8514FD19E7008174E8 /* Unlock@2x.png */,
 				4D74961D151405CF00E6B879 /* Refresh.png */,
 				4D7496241514077600E6B879 /* Refresh@2x.png */,
-				4DE4181714FDB6930007800B /* Bacon.png */,
-				4DE4181814FDB6930007800B /* Bacon@2x.png */,
+				4D56F73C151DC5480040C70D /* Anchor.png */,
+				4D56F73D151DC5480040C70D /* Anchor@2x.png */,
 				4DE4182014FE3C520007800B /* Info.png */,
 				4DE4182114FE3C520007800B /* Info@2x.png */,
 				4D177E2F1503781B0046AD1C /* Sketchbook.png */,
 				4D177E301503781B0046AD1C /* Sketchbook@2x.png */,
+				4DE4181714FDB6930007800B /* Bacon.png */,
+				4DE4181814FDB6930007800B /* Bacon@2x.png */,
 				4D177E311503781B0046AD1C /* Sword.png */,
 				4D177E321503781B0046AD1C /* Sword@2x.png */,
 				4D996D4F1509010300F8F186 /* Ghost.png */,
@@ -379,6 +396,10 @@
 				4D6E91F01511FCEE00B7D1D1 /* Blueprint - iPad.png in Resources */,
 				4D74961F151405CF00E6B879 /* Refresh.png in Resources */,
 				4D7496251514077600E6B879 /* Refresh@2x.png in Resources */,
+				4D56F73E151DC5480040C70D /* Anchor.png in Resources */,
+				4D56F73F151DC5480040C70D /* Anchor@2x.png in Resources */,
+				4D56F74D151DD22A0040C70D /* Dot@2x.png in Resources */,
+				4D56F74E151DD22A0040C70D /* Dot.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,6 +427,7 @@
 				4D63B8CC150B71A400FA4482 /* MPAnimation.m in Sources */,
 				4D40BDBB150CC23700970F2D /* Arc.m in Sources */,
 				4D6E91E01511335900B7D1D1 /* TransformController.m in Sources */,
+				4D56F747151DC80E0040C70D /* AnchorPointTable.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

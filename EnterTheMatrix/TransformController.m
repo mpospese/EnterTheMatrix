@@ -12,8 +12,10 @@
 
 #define TRANSFORM_POPOVER_ID	@"TransformPopover"
 #define INFO_POPOVER_ID			@"InfoPopover"
+#define ANCHOR_POPOVER_ID		@"AnchorPopover"
 #define TRANSFORM3D_KEY_PATH	@"transform3D"
 #define AFFINE_TRANSFORM_KEY_PATH	@"affineTransform"
+#define ANCHOR_DOT_TAG			6000
 
 @interface TransformController ()
 
@@ -23,7 +25,9 @@
 
 @synthesize transform;
 @synthesize contentView;
+@synthesize toolbar;
 @synthesize popover;
+@synthesize anchorPoint;
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
@@ -31,6 +35,7 @@
 	if (self)
 	{
 		transform = [[MPTransform alloc] init];
+		anchorPoint = AnchorPointCenter;
 		if ([self is3D])
 			[transform addSkewOperation];
 	}
@@ -54,7 +59,7 @@
 	imgView.center = CGPointMake(roundf(CGRectGetMidX(self.view.frame)), roundf(CGRectGetMidY(self.view.frame)));
 	[imgView setUserInteractionEnabled:YES];
 	[self setContentView:imgView];
-	[self.view addSubview:imgView];
+	[self.view insertSubview:imgView belowSubview:self.toolbar];
 
 	self.contentView.layer.shadowOpacity = 0.5;
 	self.contentView.layer.shadowOffset = CGSizeMake(0, 3);
@@ -75,7 +80,8 @@
 	[self removeObserverForTransform];
 	[self setPopover:nil];
     [self setContentView:nil];
-
+	[self setToolbar:nil];
+	
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
@@ -145,6 +151,90 @@
 	}
 }
 
+- (void)setAnchorPoint:(AnchorPointLocation)value
+{
+	if (anchorPoint != value)
+	{
+		anchorPoint = value;
+		CGPoint point;
+		
+		switch (anchorPoint) {
+			case AnchorPointTopLeft:
+				point = CGPointMake(0, 0);
+				break;
+				
+			case AnchorPointTopCenter:
+				point = CGPointMake(0.5, 0);
+				break;
+				
+			case AnchorPointTopRight:
+				point = CGPointMake(1, 0);
+				break;
+				
+			case AnchorPointMiddleLeft:
+				point = CGPointMake(0, 0.5);
+				break;
+				
+			case AnchorPointCenter:
+				point = CGPointMake(0.5, 0.5);
+				break;
+				
+			case AnchorPointMiddleRight:
+				point = CGPointMake(1, 0.5);
+				break;
+				
+			case AnchorPointBottomLeft:
+				point = CGPointMake(0, 1);
+				break;
+				
+			case AnchorPointBottomCenter:
+				point = CGPointMake(0.5, 1);
+				break;
+				
+			case AnchorPointBottomRight:
+				point = CGPointMake(1, 1);
+				break;
+				
+			default:
+				break;
+		}
+		
+		// Animate anchor point change
+		
+		// Begin transaction
+		[CATransaction begin];
+		NSTimeInterval duration = 0.5;
+		[CATransaction setValue:[NSNumber numberWithFloat:duration] forKey:kCATransactionAnimationDuration];
+		[CATransaction setValue:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut] forKey:kCATransactionAnimationTimingFunction];
+		[CATransaction setCompletionBlock:^{
+			// clean up anchor point animation
+			[self.contentView.layer setAnchorPoint:point];
+			[self.contentView.layer removeAnimationForKey:@"anchorPoint"];
+		}];
+		
+		CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"anchorPoint"];
+		animation.removedOnCompletion = NO;
+		animation.fillMode = kCAFillModeForwards; // leave in place (to prevent flicker)
+		animation.toValue = [NSValue valueWithCGPoint:point];
+			
+		// add the animation to the layer
+		[self.contentView.layer addAnimation:animation forKey:@"anchorPoint"];
+		
+		// commit the transaction
+		[CATransaction commit];
+
+		// position anchor dot
+		UIView *anchorDotView = [self.contentView viewWithTag:ANCHOR_DOT_TAG];
+		if (anchorDotView == nil)
+		{
+			anchorDotView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Dot"]];
+			anchorDotView.tag = ANCHOR_DOT_TAG;
+			[self.contentView addSubview:anchorDotView];
+		}
+		[anchorDotView.layer setPosition:CGPointMake(1 + point.x * (self.contentView.bounds.size.width - 2), 1 + point.y * (self.contentView.bounds.size.height - 2))];		
+	}
+}
+
 #pragma mark - Transform
 
 - (void)updateTransform
@@ -181,9 +271,30 @@
         self.popover = nil;
     }
 	
-	[UIView animateWithDuration:0.5 delay:0 options:UIViewAnimationCurveEaseInOut animations:^{
+	UIView *anchorDotView = [self.contentView viewWithTag:ANCHOR_DOT_TAG];
+
+	NSTimeInterval duration = 0.5;
+	[UIView animateWithDuration:duration delay:0 options:UIViewAnimationCurveEaseInOut animations:^{
 		[self.transform reset];
-	} completion:nil];	
+		[anchorDotView setAlpha:0];
+		
+		// animate anchor point change
+		CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"anchorPoint"];
+		animation.duration = duration;
+		animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+		animation.removedOnCompletion = NO;
+		animation.fillMode = kCAFillModeForwards; // leave in place (to prevent flicker)
+		animation.toValue = [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)];
+		
+		[self.contentView.layer addAnimation:animation forKey:@"anchorPoint"];
+	} completion:^(BOOL finished) {
+		anchorPoint = AnchorPointCenter;
+		[anchorDotView removeFromSuperview];
+		
+		// clean up anchor point animation
+		[self.contentView.layer setAnchorPoint:CGPointMake(0.5, 0.5)];
+		[self.contentView.layer removeAnimationForKey:@"anchorPoint"];
+	}];
 }
 
 - (IBAction)infoPressed:(id)sender {
@@ -196,6 +307,23 @@
     
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPad" bundle:nil];
     UIViewController *contentController = [storyboard instantiateViewControllerWithIdentifier:INFO_POPOVER_ID];
+    popover = [[UIPopoverController alloc] initWithContentViewController:contentController];
+    [popover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];	
+}
+
+- (IBAction)anchorPressed:(id)sender {
+    if ([popover isPopoverVisible])
+    {
+        [popover dismissPopoverAnimated:YES];
+        self.popover = nil;
+        return;
+    }
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPad" bundle:nil];
+    UIViewController *contentController = [storyboard instantiateViewControllerWithIdentifier:ANCHOR_POPOVER_ID];
+	AnchorPointTable *anchorTable = (AnchorPointTable *)contentController;
+	[anchorTable setAnchorPoint:self.anchorPoint];
+	[anchorTable setAnchorPointDelegate:self];
     popover = [[UIPopoverController alloc] initWithContentViewController:contentController];
     [popover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];	
 }
@@ -370,6 +498,19 @@
 	
 	lastPoint = currentPoint;
 	lastRotation = currentRotation;
+}
+
+#pragma mark - AnchorPointDelegate
+
+- (void)anchorPointDidChange:(AnchorPointLocation)newAnchorPoint
+{
+    if ([popover isPopoverVisible])
+    {
+        [popover dismissPopoverAnimated:YES];
+        self.popover = nil;
+    }
+	
+	[self setAnchorPoint:newAnchorPoint];
 }
 
 @end

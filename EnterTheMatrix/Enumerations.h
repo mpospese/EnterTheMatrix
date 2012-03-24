@@ -16,5 +16,16 @@ typedef enum {
 	TransformRotate
 } TransformOperation;
 
+typedef enum {
+	AnchorPointTopLeft,
+	AnchorPointTopCenter,
+	AnchorPointTopRight,
+	AnchorPointMiddleLeft,
+	AnchorPointCenter,
+	AnchorPointMiddleRight,
+	AnchorPointBottomLeft,
+	AnchorPointBottomCenter,
+	AnchorPointBottomRight
+} AnchorPointLocation;
 
 #endif
