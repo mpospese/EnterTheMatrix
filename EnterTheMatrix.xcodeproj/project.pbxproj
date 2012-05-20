@@ -184,7 +184,6 @@
 				4D6E91C61511042D00B7D1D1 /* Icon-Small-50.png */,
 				4D6E91CA151104D900B7D1D1 /* Icon-Small-50@2x.png */,
 				4D6E91CC1511077100B7D1D1 /* iTunesArtwork */,
-				4DBE7B7814FD12C5008174E8 /* QuartzCore.framework */,
 				4DBE7B2B14FB9290008174E8 /* EnterTheMatrix */,
 				4DBE7B2414FB9290008174E8 /* Frameworks */,
 				4DBE7B2214FB9290008174E8 /* Products */,
@@ -202,6 +201,7 @@
 		4DBE7B2414FB9290008174E8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4DBE7B7814FD12C5008174E8 /* QuartzCore.framework */,
 				4DBE7B2514FB9290008174E8 /* UIKit.framework */,
 				4DBE7B2714FB9290008174E8 /* Foundation.framework */,
 				4DBE7B2914FB9290008174E8 /* CoreGraphics.framework */,
