@@ -12,8 +12,7 @@
 
 #define FOLD_HEIGHT	120.
 #define DEFAULT_DURATION 0.3
-#define DEFAULT_SKEW	-(1. / 500.)
-#define SKEW_ANGLE_OFFSET	7
+#define DEFAULT_SKEW	-(1. / 280)
 
 @interface FoldViewController ()
 
@@ -146,13 +145,13 @@
 	switch ((SkewMode)[self.skewSegment selectedSegmentIndex])
 	{
 		case SkewModeIn:
-			return 90 - SKEW_ANGLE_OFFSET;
+			return degrees(atan(4.666666667));
 			
 		case SkewModeNone:
 			return 90;
 			
 		case SkewModeOut:
-			return 90 + SKEW_ANGLE_OFFSET;
+			return 90 + degrees(atan(1/4.666666667));
 	}
 }
 
