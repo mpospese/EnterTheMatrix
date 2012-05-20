@@ -17,7 +17,6 @@ typedef enum
 
 @interface FoldViewController : UIViewController<UIGestureRecognizerDelegate>
 
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (weak, nonatomic) IBOutlet UIView *topBar;
 @property (weak, nonatomic) IBOutlet UIView *centerBar;

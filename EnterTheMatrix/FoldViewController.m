@@ -30,7 +30,6 @@
 @synthesize folding;
 @synthesize pinchStartGap;
 @synthesize lastProgress;
-@synthesize scrollView;
 @synthesize contentView;
 @synthesize topBar;
 @synthesize centerBar;
@@ -68,7 +67,7 @@
 	// Add our tap gesture recognizer
 	UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
 	tapGesture.delegate = self;
-	[self.scrollView addGestureRecognizer:tapGesture];
+	[self.contentView addGestureRecognizer:tapGesture];
 	
 	// Add our pinch gesture recognizer
 	UIPinchGestureRecognizer *pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
@@ -108,7 +107,6 @@
 
 - (void)viewDidUnload
 {
-	[self setScrollView:nil];
 	[self setContentView:nil];
 	[self setTopBar:nil];
 	[self setCenterBar:nil];
