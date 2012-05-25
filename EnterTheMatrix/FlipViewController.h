@@ -27,9 +27,6 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet UILabel *skewLabel;
 @property (weak, nonatomic) IBOutlet UIView *controlFrame;
 
-@property (strong, nonatomic) UIImageView *pageFront;
-@property (strong, nonatomic) UIImageView *pageBack;
-@property (strong, nonatomic) UIImageView *pageFacing;
 @property (readonly) CGFloat skew;
 
 - (IBAction)skewValueChanged:(id)sender;

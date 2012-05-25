@@ -16,10 +16,10 @@
 #define ANGLE	90
 #define MARGIN	72
 
-#define SWIPE_UP_THRESHOLD -1000.0f
-#define SWIPE_DOWN_THRESHOLD 1000.0f
-#define SWIPE_LEFT_THRESHOLD -1000.0f
-#define SWIPE_RIGHT_THRESHOLD 1000.0f
+#define SWIPE_UP_THRESHOLD -100.0f
+#define SWIPE_DOWN_THRESHOLD 100.0f
+#define SWIPE_LEFT_THRESHOLD -100.0f
+#define SWIPE_RIGHT_THRESHOLD 100.0f
 
 @interface FlipViewController ()
 
@@ -30,6 +30,16 @@
 @property(assign, nonatomic, getter = isAnimating) BOOL animating;
 @property(assign, nonatomic, getter = isPanning) BOOL panning;
 @property(assign, nonatomic) CGPoint panStart;
+
+@property (strong, nonatomic) UIView *animationView;
+@property (strong, nonatomic) CALayer *layerFront;
+@property (strong, nonatomic) CALayer *layerFacing;
+@property (strong, nonatomic) CALayer *layerBack;
+@property (strong, nonatomic) CALayer *layerReveal;
+@property (strong, nonatomic) CAGradientLayer *layerFrontShadow;
+@property (strong, nonatomic) CAGradientLayer *layerBackShadow;
+@property (strong, nonatomic) CALayer *layerFacingShadow;
+@property (strong, nonatomic) CALayer *layerRevealShadow;
 
 @end
 
@@ -42,15 +52,21 @@
 @synthesize animating;
 @synthesize panning;
 @synthesize panStart;
+@synthesize animationView = _animationView;
+@synthesize layerFront = _layerFront;
+@synthesize layerFacing = _layerFacing;
+@synthesize layerBack = _layerBack;
+@synthesize layerReveal = _layerReveal;
+@synthesize layerFrontShadow = _layerFrontShadow;
+@synthesize layerBackShadow = _layerBackShadow;
+@synthesize layerFacingShadow = _layerFacingShadow;
+@synthesize layerRevealShadow = _layerRevealShadow;
 @synthesize contentView;
 @synthesize imageView;
 @synthesize speedSwitch;
 @synthesize skewSlider;
 @synthesize skewLabel;
 @synthesize controlFrame;
-@synthesize pageFront;
-@synthesize pageBack;
-@synthesize pageFacing;
 
 - (void)doInit
 {
@@ -227,6 +243,35 @@
 	return progress;
 }
 
+// switching between the 2 halves of the animation - between front and back sides of the page we're turning
+- (void)switchToStage:(int)stageIndex
+{
+	// 0 = stage 1, 1 = stage 2
+	[CATransaction begin];
+	[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+	
+	if (stageIndex == 0)
+	{
+		[self doFlip2:0];
+		[self.animationView.layer insertSublayer:self.layerFacing above:self.layerReveal];
+		[self.animationView.layer insertSublayer:self.layerFront below:self.layerFacing];
+		[self.layerReveal addSublayer:self.layerRevealShadow];
+		[self.layerBack removeFromSuperlayer];
+		[self.layerFacingShadow removeFromSuperlayer];
+	}
+	else
+	{
+		[self doFlip1:1];
+		[self.animationView.layer insertSublayer:self.layerReveal above:self.layerFacing];
+		[self.animationView.layer insertSublayer:self.layerBack below:self.layerReveal];
+		[self.layerFacing addSublayer:self.layerFacingShadow];
+		[self.layerFront removeFromSuperlayer];
+		[self.layerRevealShadow removeFromSuperlayer];
+	}
+	
+	[CATransaction commit];
+}
+
 - (void)handlePan:(UIPanGestureRecognizer *)gestureRecognizer
 {
     UIGestureRecognizerState state = [gestureRecognizer state];
@@ -265,12 +310,7 @@
 		if (wasFlipFrontPage != [self isFlipFrontPage])
 		{
 			// switching between the 2 halves of the animation - between front and back sides of the page we're turning
-			if ([self isFlipFrontPage])
-			{
-				[self doFlip2:0];
-			}
-			[self.pageFront setHidden:![self isFlipFrontPage]];
-			[self.pageBack setHidden:[self isFlipFrontPage]];
+			[self switchToStage:[self isFlipFrontPage]? 0 : 1];
 		}
 		if ([self isFlipFrontPage])
 			[self doFlip1:progress];
@@ -410,21 +450,17 @@
 - (void)animateFlip1:(BOOL)shouldFallBack fromProgress:(CGFloat)fromProgress
 {
 	// 2-stage animation
-	CALayer *layer = shouldFallBack? self.pageBack.layer : self.pageFront.layer;
-	CGFloat progress;
-	CGFloat toProgress = shouldFallBack? 0 : 1;
+	CALayer *layer = shouldFallBack? self.layerBack : self.layerFront;
+	CALayer *flippingShadow = shouldFallBack? self.layerBackShadow : self.layerFrontShadow;
+	CALayer *coveredShadow = shouldFallBack? self.layerFacingShadow : self.layerRevealShadow;
+	
+	if (shouldFallBack)
+		fromProgress = 1 - fromProgress;
+	CGFloat toProgress = 1;
 
 	// Figure out how many frames we want
-	CGFloat duration = DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5) * abs(toProgress - fromProgress);
+	CGFloat duration = DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5) * (toProgress - fromProgress);
 	NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
-	
-	// Build an array of keyframes (each a single transform)
-	NSMutableArray* array = [NSMutableArray arrayWithCapacity:frameCount + 1];
-	for (int frame = 0; frame <= frameCount; frame++)
-	{
-		progress = fromProgress + (toProgress - fromProgress) * ((float)frame) / frameCount;
-		[array addObject:[NSValue valueWithCATransform3D:shouldFallBack? [self flipTransform2:progress] : [self flipTransform1:progress]]];
-	}
 	
 	// Create a transaction
 	[CATransaction begin];
@@ -433,48 +469,96 @@
 	[CATransaction setCompletionBlock:^{
 		// 2nd half of animation, once 1st half completes
 		[self setFlipFrontPage:shouldFallBack];
-		self.pageFront.hidden = !shouldFallBack;
-		self.pageBack.hidden = shouldFallBack;
+		[self switchToStage:shouldFallBack? 0 : 1];
 		
 		[self animateFlip2:shouldFallBack fromProgress:shouldFallBack? 1 : 0];
 	}];
 	
 	// Create the animation
-	// (we're animating transform property)
-	CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; 
-	// set our keyframe values
-	[animation setValues:[NSArray arrayWithArray:array]]; 		
-	[animation setRemovedOnCompletion:YES];
+	BOOL forwards = [self direction] == FlipDirectionForward;
+	BOOL vertical = [self orientation] == FlipOrientationVertical;
+	BOOL inward = NO;
+	NSString *rotationKey = vertical? @"transform.rotation.x" : @"transform.rotation.y";
+	double factor = (shouldFallBack? -1 : 1) * (forwards? -1 : 1) * (vertical? -1 : 1) * M_PI / 180;
+
+	// Flip front page from flat up to vertical
+	CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:rotationKey];
+	[animation setFromValue:[NSNumber numberWithDouble:90 * factor * fromProgress]];
+	[animation setToValue:[NSNumber numberWithDouble:90*factor]];
+	[layer addAnimation:animation forKey:nil];
+	[layer setTransform:CATransform3DMakeRotation(90*factor, vertical? 1 : 0, vertical? 0 : 1, 0)];
+
+	// Shadows
 	
-	// add the animation
-	[layer addAnimation:animation forKey:@"transform1"];
-	// set final state
-	NSValue* toValue = [animation.values lastObject];
-	[layer setTransform:[toValue CATransform3DValue]];
+	// darken front page just slightly as we flip (just to give it a crease where it touches facing page)
+	animation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+	[animation setFromValue:[NSNumber numberWithDouble:0.1 * fromProgress]];
+	[animation setToValue:[NSNumber numberWithDouble:0.1]];
+	[flippingShadow addAnimation:animation forKey:nil];
+	[flippingShadow setOpacity:0.1];
 	
-	// Commit the transaction
+	if (!inward)
+	{
+		// lighten the page that is revealed by front page flipping up (along a cosine curve)
+		// TODO: consider FROM value
+		NSMutableArray* arrayOpacity = [NSMutableArray arrayWithCapacity:frameCount + 1];
+		CGFloat progress;
+		CGFloat cosOpacity;
+		for (int frame = 0; frame <= frameCount; frame++)
+		{
+			progress = fromProgress + (toProgress - fromProgress) * ((float)frame) / frameCount;
+			//progress = (((float)frame) / frameCount);
+			cosOpacity = cos(radians(90 * progress)) * (1./3);
+			if (frame == frameCount)
+				cosOpacity = 0;
+			[arrayOpacity addObject:[NSNumber numberWithFloat:cosOpacity]];
+		}
+		
+		CAKeyframeAnimation *keyAnimation = [CAKeyframeAnimation animationWithKeyPath:@"opacity"];
+		[keyAnimation setValues:[NSArray arrayWithArray:arrayOpacity]];
+		[coveredShadow addAnimation:keyAnimation forKey:nil];
+		[coveredShadow setOpacity:[[arrayOpacity lastObject] floatValue]];
+	}
+	
+	// shadow opacity should fade up from 0 to 0.5 at 12.5% progress then remain there through 100%
+	NSMutableArray* arrayOpacity = [NSMutableArray arrayWithCapacity:frameCount + 1];
+	CGFloat progress;
+	CGFloat shadowProgress;
+	for (int frame = 0; frame <= frameCount; frame++)
+	{
+		progress = fromProgress + (toProgress - fromProgress) * ((float)frame) / frameCount;
+		shadowProgress = progress * 8;
+		if (shadowProgress > 1)
+			shadowProgress = 1;
+		
+		[arrayOpacity addObject:[NSNumber numberWithFloat:0.5 * shadowProgress]];
+	}
+	
+	CAKeyframeAnimation *keyAnimation = [CAKeyframeAnimation animationWithKeyPath:@"shadowOpacity"];
+	[keyAnimation setCalculationMode:kCAAnimationLinear];
+	[keyAnimation setValues:arrayOpacity];
+	[layer addAnimation:keyAnimation forKey:nil];
+	[layer setShadowOpacity:[[arrayOpacity lastObject] floatValue]];
+	
+	// Commit the transaction for 1st half
 	[CATransaction commit];
 }
 
 - (void)animateFlip2:(BOOL)shouldFallBack fromProgress:(CGFloat)fromProgress
 {
 	// 1-stage animation
-	CALayer *layer = shouldFallBack? self.pageFront.layer : self.pageBack.layer;
+	CALayer *layer = shouldFallBack? self.layerFront : self.layerBack;
+	CALayer *flippingShadow = shouldFallBack? self.layerFrontShadow : self.layerBackShadow;
+	CALayer *coveredShadow = shouldFallBack? self.layerRevealShadow : self.layerFacingShadow;
 	
 	// Figure out how many frames we want
 	CGFloat duration = DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5);
 	NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
 	
 	// Build an array of keyframes (each a single transform)
-	NSMutableArray* array = [NSMutableArray arrayWithCapacity:frameCount + 1];
-	CGFloat progress;
-	CGFloat toProgress = shouldFallBack? 0 : 1;
-	
-	for (int frame = 0; frame <= frameCount; frame++)
-	{
-		progress = fromProgress + (toProgress - fromProgress) * ((float)frame) / frameCount;
-		[array addObject:[NSValue valueWithCATransform3D:shouldFallBack? [self flipTransform1:progress] : [self flipTransform2:progress]]];
-	}
+	if (shouldFallBack)
+		fromProgress = 1 - fromProgress;
+	CGFloat toProgress = 1;
 	
 	// Create a transaction
 	[CATransaction begin];
@@ -490,17 +574,72 @@
 	}];
 	
 	// Create the animation
-	// (we're animating transform property)
-	CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"transform"]; 
-	// set our keyframe values
-	[animation setValues:[NSArray arrayWithArray:array]]; 		
-	[animation setRemovedOnCompletion:YES];
+	BOOL forwards = [self direction] == FlipDirectionForward;
+	BOOL vertical = [self orientation] == FlipOrientationVertical;
+	BOOL inward = NO;
+	NSString *rotationKey = vertical? @"transform.rotation.x" : @"transform.rotation.y";
+	double factor = (shouldFallBack? -1 : 1) * (forwards? -1 : 1) * (vertical? -1 : 1) * M_PI / 180;
 	
-	// add the animation
-	[layer addAnimation:animation forKey:@"transform"];
-	// set final state
-	NSValue* toValue = [animation.values lastObject];
-	[layer setTransform:[toValue CATransform3DValue]];
+	// Flip back page from vertical down to flat
+	CABasicAnimation* animation2 = [CABasicAnimation animationWithKeyPath:rotationKey];
+	[animation2 setFromValue:[NSNumber numberWithDouble:-90*factor*(1-fromProgress)]];
+	[animation2 setToValue:[NSNumber numberWithDouble:0]];
+	[animation2 setFillMode:kCAFillModeForwards];
+	[animation2 setRemovedOnCompletion:NO];
+	[layer addAnimation:animation2 forKey:nil];
+	[layer setTransform:CATransform3DIdentity];
+	
+	// Shadows
+	
+	// Lighten back page just slightly as we flip (just to give it a crease where it touches reveal page)
+	animation2 = [CABasicAnimation animationWithKeyPath:@"opacity"];
+	[animation2 setFromValue:[NSNumber numberWithDouble:0.1 * (1-fromProgress)]];
+	[animation2 setToValue:[NSNumber numberWithDouble:0]];
+	[animation2 setFillMode:kCAFillModeForwards];
+	[animation2 setRemovedOnCompletion:NO];
+	[flippingShadow addAnimation:animation2 forKey:nil];
+	[flippingShadow setOpacity:0];
+	
+	if (!inward)
+	{
+		// Darken facing page as it gets covered by back page flipping down (along a sine curve)
+		NSMutableArray* arrayOpacity = [NSMutableArray arrayWithCapacity:frameCount + 1];
+		CGFloat progress;
+		CGFloat sinOpacity;
+		for (int frame = 0; frame <= frameCount; frame++)
+		{
+			progress = fromProgress + (toProgress - fromProgress) * ((float)frame) / frameCount;
+			sinOpacity = (sin(radians(90 * progress))* (1./3));
+			if (frame == 0)
+				sinOpacity = 0;
+			[arrayOpacity addObject:[NSNumber numberWithFloat:sinOpacity]];
+		}
+		
+		CAKeyframeAnimation *keyAnimation = [CAKeyframeAnimation animationWithKeyPath:@"opacity"];
+		[keyAnimation setValues:[NSArray arrayWithArray:arrayOpacity]];
+		[coveredShadow addAnimation:keyAnimation forKey:nil];
+		[coveredShadow setOpacity:[[arrayOpacity lastObject] floatValue]];
+	}
+	
+	// shadow opacity on flipping page should be 0.5 through 87.5% progress then fade to 0 at 100%
+	NSMutableArray* arrayOpacity = [NSMutableArray arrayWithCapacity:frameCount + 1];
+	CGFloat progress;
+	CGFloat shadowProgress;
+	for (int frame = 0; frame <= frameCount; frame++)
+	{
+		progress = fromProgress + (toProgress - fromProgress) * ((float)frame) / frameCount;
+		shadowProgress = (1 - progress) * 8;
+		if (shadowProgress > 1)
+			shadowProgress = 1;
+		
+		[arrayOpacity addObject:[NSNumber numberWithFloat:0.5 * shadowProgress]];
+	}
+	
+	CAKeyframeAnimation *keyAnimation = [CAKeyframeAnimation animationWithKeyPath:@"shadowOpacity"];
+	[keyAnimation setCalculationMode:kCAAnimationLinear];
+	[keyAnimation setValues:arrayOpacity];
+	[layer addAnimation:keyAnimation forKey:nil];
+	[layer setShadowOpacity:[[arrayOpacity lastObject] floatValue]];
 	
 	// Commit the transaction
 	[CATransaction commit];
@@ -512,84 +651,201 @@
 	orientation = anOrientation;
 	[self setFlipFrontPage:YES];
 	
-	BOOL isForward = (direction == FlipDirectionForward);
-	BOOL isVertical = (orientation == FlipOrientationVertical);
-
-	UIImage *next = isForward? [self nextImage] : [self prevImage];
-	CGRect rect = self.contentView.bounds;
-	CGRect half1Rect = rect;
-	if (orientation == FlipOrientationVertical)
-		half1Rect.size.height = rect.size.height / 2;
-	else
-		half1Rect.size.width = rect.size.width / 2;
-	CGRect half2Rect = half1Rect;
-	if (orientation == FlipOrientationVertical)
-		half2Rect.origin.y = half1Rect.size.height;
-	else 
-		half2Rect.origin.x = half1Rect.size.width;
-	
-	UIEdgeInsets insets = UIEdgeInsetsMake(isVertical? 0 : 1, isVertical? 1 : 0, isVertical? 0 : 1, isVertical? 1 : 0);
-	self.pageFront = [[UIImageView alloc] initWithImage:[MPAnimation renderImageForAntialiasing: [MPAnimation renderImageFromView:self.contentView withRect:isForward? half2Rect : half1Rect] withInsets:insets]];
-	self.pageFacing = [[UIImageView alloc] initWithImage:[MPAnimation renderImageForAntialiasing: [MPAnimation renderImageFromView:self.contentView withRect:isForward? half1Rect : half2Rect] withInsets:insets]];
-	
-	self.imageView.image = next;
-	
-	self.pageBack = [[UIImageView alloc] initWithImage:[MPAnimation renderImageForAntialiasing: [MPAnimation renderImageFromView:self.contentView withRect:isForward? half1Rect : half2Rect] withInsets:insets]];
-	self.pageBack.hidden = YES;
-	
-	half1Rect = [self.view convertRect:half1Rect fromView:self.contentView];
-	half2Rect = [self.view convertRect:half2Rect fromView:self.contentView];
-	
-	half1Rect = CGRectOffset(half1Rect, isVertical? 0 : half1Rect.size.width/2, isVertical? half1Rect.size.height/2 : 0);
-	half2Rect = CGRectOffset(half2Rect, isVertical? 0 : -half1Rect.size.width/2, isVertical? -half1Rect.size.height/2 : 0);
-
-	// account for 1-pixel clear margin we introduced for anti-aliasing
-	half1Rect = CGRectInset(half1Rect, -insets.left, -insets.top);
-	half2Rect = CGRectInset(half2Rect, -insets.left, -insets.top);
-	
-	self.pageFront.frame = isForward? half2Rect : half1Rect;
-	self.pageBack.frame = isForward? half1Rect : half2Rect;
-	self.pageFacing.frame = isForward? half1Rect : half2Rect;
-	
-	// set anchor point to be along center spine (bottom edge of top half/top edge of bottom half/right edge of left half/left edge of right half)
-	self.pageFront.layer.anchorPoint = isVertical? CGPointMake(0.5, isForward? 0 : 1) : CGPointMake(isForward? 0 : 1, 0.5);
-	self.pageBack.layer.anchorPoint = isVertical? CGPointMake(0.5, isForward? 1 : 0) : CGPointMake(isForward? 1 : 0, 0.5);
-	self.pageFacing.layer.anchorPoint = self.pageBack.layer.anchorPoint;
-	
-	[self.view addSubview:pageFront];
-	[self.view addSubview:pageFacing];
-	[self.view addSubview:pageBack ];
-	
-	// set shadows on the 2 pages we'll be animating
-	self.pageFront.layer.shadowOpacity = 0.5;
-	self.pageFront.layer.shadowRadius = 1;
-	self.pageFront.layer.shadowOffset = isVertical? CGSizeMake(0, isForward? 1 : -1) : CGSizeMake(isForward? 1 : -1, 0);
-	[[self.pageFront layer] setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.pageFront bounds], insets.left, insets.top)] CGPath]];	
-	self.pageBack.layer.shadowOpacity = 0.5;
-	self.pageBack.layer.shadowRadius = 1;
-	self.pageBack.layer.shadowOffset = isVertical? CGSizeMake(0, isForward? -1 : 1) : CGSizeMake(isForward? -1 : 1, 0);
-	[[self.pageBack layer] setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.pageBack bounds], insets.left, insets.top)] CGPath]];	
+	[self buildLayers:aDirection orientation:anOrientation];
 
 	// set the back page in the vertical position (midpoint of animation)
 	[self doFlip2:0];
 }
 
+- (void)buildLayers:(FlipDirection)aDirection orientation:(FlipOrientation)anOrientation
+{
+	BOOL forwards = aDirection == FlipDirectionForward;
+	BOOL vertical = anOrientation == FlipOrientationVertical;
+	BOOL inward = NO;
+	
+	UIImage *next = forwards? [self nextImage] : [self prevImage];
+	CGRect bounds = self.contentView.bounds;
+	CGFloat scale = [[UIScreen mainScreen] scale];
+	
+	// we inset the panels 1 point on each side with a transparent margin to antialiase the edges
+	UIEdgeInsets insets = vertical? UIEdgeInsetsMake(0, 1, 0, 1) : UIEdgeInsetsMake(1, 0, 1, 0);
+	
+	CGRect upperRect = bounds;
+	if (vertical)
+		upperRect.size.height = bounds.size.height / 2;
+	else
+		upperRect.size.width = bounds.size.width / 2;
+	CGRect lowerRect = upperRect;
+	if (vertical)
+		lowerRect.origin.y += upperRect.size.height;
+	else
+		lowerRect.origin.x += upperRect.size.width;
+	
+	// Create 4 images to represent 2 halves of the 2 views
+	
+	// The page flip animation is broken into 2 halves
+	// 1. Flip old page up to vertical
+	// 2. Flip new page from vertical down to flat
+	// as we pass the halfway point of the animation, the "page" switches from old to new
+	
+	// front Page  = the half of current view we are flipping during 1st half
+	// facing Page = the other half of the current view (doesn't move, gets covered by back page during 2nd half)
+	// back Page   = the half of the next view that appears on the flipping page during 2nd half
+	// reveal Page = the other half of the next view (doesn't move, gets revealed by front page during 1st half)
+	UIImage *pageFrontImage = [MPAnimation renderImageFromView:self.contentView withRect:forwards? lowerRect : upperRect transparentInsets:insets];
+	// TODO: facing doesn't need insets
+	UIImage *pageFacingImage = [MPAnimation renderImageFromView:self.contentView withRect:forwards? upperRect : lowerRect];
+	
+	self.imageView.image = next;
+	
+	UIImage *pageBackImage = [MPAnimation renderImageFromView:self.contentView withRect:forwards? upperRect : lowerRect transparentInsets:insets];
+	UIImage *pageRevealImage = [MPAnimation renderImageFromView:self.contentView withRect:forwards? lowerRect : upperRect];
+	
+	UIView *containerView = [self.contentView superview];
+	//[self.contentView setHidden:YES];
+	
+	CATransform3D transform = CATransform3DIdentity;
+	
+	CGFloat width = vertical? bounds.size.width : bounds.size.height;
+	CGFloat height = vertical? bounds.size.height/2 : bounds.size.width/2;
+	CGFloat upperHeight = roundf(height * scale) / scale; // round heights to integer for odd height
+	
+	// view to hold all our sublayers
+	self.animationView = [[UIView alloc] initWithFrame:self.contentView.frame];
+	self.animationView.backgroundColor = [UIColor clearColor];
+	[containerView insertSubview:self.animationView aboveSubview:self.contentView];
+	
+	self.layerReveal = [CALayer layer];
+	self.layerReveal.frame = (CGRect){CGPointZero, pageRevealImage.size};
+	self.layerReveal.anchorPoint = CGPointMake(vertical? 0.5 : forwards? 0 : 1, vertical? forwards? 0 : 1 : 0.5);
+	self.layerReveal.position = CGPointMake(vertical? width/2 : upperHeight, vertical? upperHeight : width/2);
+	[self.layerReveal setContents:(id)[pageRevealImage CGImage]];
+	[self.animationView.layer addSublayer:self.layerReveal];
+	
+	self.layerFront = [CALayer layer];
+	self.layerFront.frame = (CGRect){CGPointZero, pageFrontImage.size};
+	self.layerFront.anchorPoint = CGPointMake(vertical? 0.5 : forwards? 0 : 1, vertical? forwards? 0 : 1 : 0.5);
+	self.layerFront.position = CGPointMake(vertical? width/2 : upperHeight, vertical? upperHeight : width/2);
+	[self.layerFront setContents:(id)[pageFrontImage CGImage]];
+	[self.animationView.layer addSublayer:self.layerFront];
+	
+	self.layerFacing = [CALayer layer];
+	self.layerFacing.frame = (CGRect){CGPointZero, pageFacingImage.size};
+	self.layerFacing.anchorPoint = CGPointMake(vertical? 0.5 : forwards? 1 : 0, vertical? forwards? 1 : 0 : 0.5);
+	self.layerFacing.position = CGPointMake(vertical? width/2 : upperHeight, vertical? upperHeight : width/2);
+	[self.layerFacing setContents:(id)[pageFacingImage CGImage]];
+	[self.animationView.layer addSublayer:self.layerFacing];
+	
+	self.layerBack = [CALayer layer];
+	self.layerBack.frame = (CGRect){CGPointZero, pageBackImage.size};
+	self.layerBack.anchorPoint = CGPointMake(vertical? 0.5 : forwards? 1 : 0, vertical? forwards? 1 : 0 : 0.5);
+	self.layerBack.position = CGPointMake(vertical? width/2 : upperHeight, vertical? upperHeight : width/2);
+	[self.layerBack setContents:(id)[pageBackImage CGImage]];
+	
+	// Create shadow layers
+	self.layerFrontShadow = [CAGradientLayer layer];
+	[self.layerFront addSublayer:self.layerFrontShadow];
+	self.layerFrontShadow.frame = CGRectInset(self.layerFront.bounds, insets.left, insets.top);
+	self.layerFrontShadow.opacity = 0.0;
+	self.layerFrontShadow.colors = [NSArray arrayWithObjects:(id)[[[UIColor blackColor] colorWithAlphaComponent:0.5] CGColor], (id)[UIColor blackColor].CGColor, (id)[[UIColor clearColor] CGColor], nil];
+	//self.layerFrontShadow.colors = [NSArray arrayWithObjects:(id)[UIColor blackColor].CGColor, (id)[[UIColor clearColor] CGColor], nil];
+	self.layerFrontShadow.startPoint = CGPointMake(0, 0.5);
+	self.layerFrontShadow.endPoint = CGPointMake(0.5, 0.5);
+	self.layerFrontShadow.locations = [NSArray arrayWithObjects:[NSNumber numberWithDouble:0], [NSNumber numberWithDouble:0.1], [NSNumber numberWithDouble:1], nil];
+	
+	self.layerBackShadow = [CAGradientLayer layer];
+	[self.layerBack addSublayer:self.layerBackShadow];
+	self.layerBackShadow.frame = CGRectInset(self.layerBack.bounds, insets.left, insets.top);
+	self.layerBackShadow.opacity = 0.1;
+	self.layerBackShadow.colors = [NSArray arrayWithObjects:(id)[[[UIColor blackColor] colorWithAlphaComponent:0.5] CGColor], (id)[UIColor blackColor].CGColor, (id)[[UIColor clearColor] CGColor], nil];
+	self.layerBackShadow.startPoint = CGPointMake(0.5, 0.5);
+	self.layerBackShadow.endPoint = CGPointMake(1, 0.5);
+	self.layerBackShadow.locations = [NSArray arrayWithObjects:[NSNumber numberWithDouble:0], [NSNumber numberWithDouble:0.9], [NSNumber numberWithDouble:1], nil];
+	
+	if (!inward)
+	{
+		self.layerRevealShadow = [CALayer layer];
+		[self.layerReveal addSublayer:self.layerRevealShadow];
+		self.layerRevealShadow.frame = self.layerReveal.bounds;
+		self.layerRevealShadow.backgroundColor = [UIColor blackColor].CGColor;
+		self.layerRevealShadow.opacity = 0.5;
+		
+		self.layerFacingShadow = [CALayer layer];
+		//[self.layerFacing addSublayer:self.layerFacingShadow];
+		self.layerFacingShadow.frame = self.layerFacing.bounds;
+		self.layerFacingShadow.backgroundColor = [UIColor blackColor].CGColor;
+		self.layerFacingShadow.opacity = 0.0;
+	}
+	
+	// Perspective is best proportional to the height of the pieces being folded away, rather than a fixed value
+	// the larger the piece being folded, the more perspective distance (zDistance) is needed.
+	// m34 = -1/zDistance
+	transform.m34 = [self skew];
+	if (inward)
+		transform.m34 = -transform.m34; // flip perspective around
+	self.animationView.layer.sublayerTransform = transform;
+	
+	// set shadows on the 2 pages we'll be animating
+	//self.layerFront.shadowOpacity = 0.5;
+	self.layerFront.shadowOffset = CGSizeMake(0,3);
+	[self.layerFront setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.layerFront bounds], insets.left, insets.top)] CGPath]];	
+	self.layerBack.shadowOpacity = 0.5;
+	self.layerBack.shadowOffset = CGSizeMake(0,3);
+	[self.layerBack setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.layerBack bounds], insets.left, insets.top)] CGPath]];
+}
+
  - (void)doFlip1:(CGFloat)progress
 {
-	[self.pageFront.layer setTransform:[self flipTransform1:progress]];
+	[CATransaction begin];
+	[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+
+	if (progress < 0)
+		progress = 0;
+	else if (progress > 1)
+		progress = 1;
+
+	[self.layerFront setTransform:[self flipTransform1:progress]];
+	[self.layerFrontShadow setOpacity:0.1 * progress];
+	CGFloat cosOpacity = cos(radians(90 * progress)) * (1./3);
+	[self.layerRevealShadow setOpacity:cosOpacity];
+	
+	// shadow opacity should fade up from 0 to 0.5 at 12.5% progress then remain there through 100%
+	CGFloat shadowProgress = progress * 8;
+	if (shadowProgress > 1)
+		shadowProgress = 1;
+	[self.layerFront setShadowOpacity:0.5 * shadowProgress];
+
+	[CATransaction commit];
 }
  
  - (void)doFlip2:(CGFloat)progress
 {
-	[self.pageBack.layer setTransform:[self flipTransform2:progress]];
+	[CATransaction begin];
+	[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+
+	if (progress < 0)
+		progress = 0;
+	else if (progress > 1)
+		progress = 1;
+	
+	[self.layerBack setTransform:[self flipTransform2:progress]];
+	[self.layerBackShadow setOpacity:0.1 * (1- progress)];
+	CGFloat sinOpacity = sin(radians(90 * progress)) * (1./3);
+	[self.layerFacingShadow setOpacity:sinOpacity];
+	
+	// shadow opacity on flipping page should be 0.5 through 87.5% progress then fade to 0 at 100%
+	CGFloat shadowProgress = (1 - progress) * 8;
+	if (shadowProgress > 1)
+		shadowProgress = 1;
+	[self.layerBack setShadowOpacity:0.5 * shadowProgress];
+
+	[CATransaction commit];
 }
 	 
 - (CATransform3D)flipTransform1:(CGFloat)progress
 {
 	CATransform3D tHalf1 = CATransform3DIdentity;
 
-	// set skew for perspective
-	tHalf1.m34 = [self skew] * sinf(radians(90 * progress));
 	// rotate away from viewer
 	BOOL isForward = (direction == FlipDirectionForward);
 	BOOL isVertical = (orientation == FlipOrientationVertical);
@@ -602,8 +858,6 @@
 {
 	CATransform3D tHalf2 = CATransform3DIdentity;
 
-	// set skew for perspective
-	tHalf2.m34 = [self skew] * cosf(radians(90 * progress));
 	// rotate away from viewer
 	BOOL isForward = (direction == FlipDirectionForward);
 	BOOL isVertical = (orientation == FlipOrientationVertical);
@@ -614,12 +868,17 @@
 
 - (void)endFlip:(BOOL)completed
 {
-	[self.pageFront removeFromSuperview];
-	[self.pageBack removeFromSuperview];
-	[self.pageFacing removeFromSuperview];
-	self.pageFront = nil;
-	self.pageBack = nil;
-	self.pageFacing = nil;
+	// cleanup	
+	[self.animationView removeFromSuperview];
+	self.animationView = nil;
+	self.layerFront = nil;
+	self.layerBack = nil;
+	self.layerFacing = nil;
+	self.layerReveal = nil;
+	self.layerFrontShadow = nil;
+	self.layerBackShadow = nil;
+	self.layerFacingShadow = nil;
+	self.layerRevealShadow = nil;
 	
 	if (completed)
 	{
