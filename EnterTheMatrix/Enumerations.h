@@ -28,4 +28,20 @@ typedef enum {
 	AnchorPointBottomRight
 } AnchorPointLocation;
 
+typedef enum {
+	SkewModeInverse,
+	SkewModeNone,
+	SkewModeLow,
+	SkewModeNormal,
+	SkewModeHigh
+} SkewMode;
+
+typedef enum {
+	DurationMultiplier1x,
+	DurationMultiplier2x,
+	DurationMultiplier5x,
+	DurationMultiplier10x
+} DurationMultiplier;
+
+
 #endif

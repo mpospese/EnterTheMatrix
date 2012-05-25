@@ -31,6 +31,7 @@
 @property(assign, nonatomic, getter = isPanning) BOOL panning;
 @property(assign, nonatomic) CGPoint panStart;
 @property (assign, nonatomic) CGFloat durationMultiplier;
+@property (assign, nonatomic) SkewMode skewMode;
 @property (strong, nonatomic) UIView *animationView;
 @property (strong, nonatomic) CALayer *layerFront;
 @property (strong, nonatomic) CALayer *layerFacing;
@@ -53,6 +54,7 @@
 @synthesize panning;
 @synthesize panStart;
 @synthesize durationMultiplier = _durationMultiplier;
+@synthesize skewMode = _skewMode;
 @synthesize animationView = _animationView;
 @synthesize layerFront = _layerFront;
 @synthesize layerFacing = _layerFacing;
@@ -73,6 +75,7 @@
 	direction = FlipDirectionForward;
 	orientation = FlipOrientationVertical;
 	_durationMultiplier = 1;
+	_skewMode = SkewModeNormal;
 }
 
 - (id)init
@@ -175,9 +178,27 @@
 
 #pragma mark - Properties
 
-- (CGFloat)skew
+- (CGFloat)skewMultiplier
 {
-	return -[[self skewSlider] value];
+	switch ([self skewMode]) {
+		case SkewModeInverse:
+			return -4.666667;
+			
+		case SkewModeNone:
+			return 0;
+			
+		case SkewModeLow:
+			return 12;
+			
+		case SkewModeNormal:
+			return 4.666667;
+			
+		case SkewModeHigh:
+			return 1.5;
+			
+		default:
+			break;
+	}
 }
 
 #pragma mark - Gesture handlers
@@ -661,7 +682,7 @@
 {
 	BOOL forwards = aDirection == FlipDirectionForward;
 	BOOL vertical = anOrientation == FlipOrientationVertical;
-	BOOL inward = NO;
+	BOOL inward = [self skewMode] == SkewModeInverse;
 	
 	UIImage *next = forwards? [self nextImage] : [self prevImage];
 	CGRect bounds = self.contentView.bounds;
@@ -780,9 +801,10 @@
 	// Perspective is best proportional to the height of the pieces being folded away, rather than a fixed value
 	// the larger the piece being folded, the more perspective distance (zDistance) is needed.
 	// m34 = -1/zDistance
-	transform.m34 = [self skew];
-	if (inward)
-		transform.m34 = -transform.m34; // flip perspective around
+	if ([self skewMode] == SkewModeNone)
+		transform.m34 = 0;
+	else
+		transform.m34 = - 1 / (height * [self skewMultiplier]);
 	self.animationView.layer.sublayerTransform = transform;
 	
 	// set shadows on the 2 pages we'll be animating
@@ -896,8 +918,8 @@
 #pragma mark - Slider
 
 - (IBAction)skewValueChanged:(id)sender {
-	UISlider *slider = sender;
-	self.skewLabel.text = [NSString stringWithFormat:@"%.04f", slider.value];
+	UISegmentedControl *segment = sender;
+	[self setSkewMode:(SkewMode)segment.selectedSegmentIndex];
 }
 
 - (IBAction)durationValueChanged:(id)sender {

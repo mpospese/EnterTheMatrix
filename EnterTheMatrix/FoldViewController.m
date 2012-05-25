@@ -129,14 +129,20 @@
 {
 	switch ((SkewMode)[self.skewSegment selectedSegmentIndex])
 	{
-		case SkewModeIn:
-			return DEFAULT_SKEW;
+		case SkewModeInverse:
+			return 1 / ((FOLD_HEIGHT / 2) *  4.666666667);
 			
 		case SkewModeNone:
 			return 0;
 			
-		case SkewModeOut:
-			return -DEFAULT_SKEW;
+		case SkewModeLow:
+			return -1 / ((FOLD_HEIGHT / 2) *  12);
+			
+		case SkewModeNormal:
+			return -1 / ((FOLD_HEIGHT / 2) *  4.666666667);
+			
+		case SkewModeHigh:
+			return -1 / ((FOLD_HEIGHT / 2) *  1.5);
 	}
 }
 
@@ -144,14 +150,21 @@
 {
 	switch ((SkewMode)[self.skewSegment selectedSegmentIndex])
 	{
-		case SkewModeIn:
-			return degrees(atan(4.666666667));
+		case SkewModeInverse:
+			return 90 + degrees(atan(1/4.666666667));
 			
 		case SkewModeNone:
 			return 90;
 			
-		case SkewModeOut:
-			return 90 + degrees(atan(1/4.666666667));
+		case SkewModeLow:
+			return degrees(atan(12));
+			
+		case SkewModeNormal:
+			return degrees(atan(4.666666667));
+			
+		case SkewModeHigh:
+			return degrees(atan(1.5));
+			
 	}
 }
 

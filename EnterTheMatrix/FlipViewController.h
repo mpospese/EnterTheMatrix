@@ -26,8 +26,8 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet UILabel *skewLabel;
 @property (weak, nonatomic) IBOutlet UIView *controlFrame;
 
-@property (readonly) CGFloat skew;
 @property (readonly, nonatomic) CGFloat durationMultiplier;
+@property (readonly, nonatomic) CGFloat skewMultiplier;
 
 - (IBAction)skewValueChanged:(id)sender;
 - (IBAction)durationValueChanged:(id)sender;

@@ -8,13 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum
-{
-	SkewModeIn,
-	SkewModeNone,
-	SkewModeOut
-} SkewMode;
-
 @interface FoldViewController : UIViewController<UIGestureRecognizerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *contentView;
