@@ -30,7 +30,7 @@
 @property(assign, nonatomic, getter = isAnimating) BOOL animating;
 @property(assign, nonatomic, getter = isPanning) BOOL panning;
 @property(assign, nonatomic) CGPoint panStart;
-
+@property (assign, nonatomic) CGFloat durationMultiplier;
 @property (strong, nonatomic) UIView *animationView;
 @property (strong, nonatomic) CALayer *layerFront;
 @property (strong, nonatomic) CALayer *layerFacing;
@@ -52,6 +52,7 @@
 @synthesize animating;
 @synthesize panning;
 @synthesize panStart;
+@synthesize durationMultiplier = _durationMultiplier;
 @synthesize animationView = _animationView;
 @synthesize layerFront = _layerFront;
 @synthesize layerFacing = _layerFacing;
@@ -63,7 +64,6 @@
 @synthesize layerRevealShadow = _layerRevealShadow;
 @synthesize contentView;
 @synthesize imageView;
-@synthesize speedSwitch;
 @synthesize skewSlider;
 @synthesize skewLabel;
 @synthesize controlFrame;
@@ -72,6 +72,7 @@
 {
 	direction = FlipDirectionForward;
 	orientation = FlipOrientationVertical;
+	_durationMultiplier = 1;
 }
 
 - (id)init
@@ -160,7 +161,6 @@
 {
 	[self setContentView:nil];
 	[self setImageView:nil];
-	[self setSpeedSwitch:nil];
 	[self setSkewSlider:nil];
 	[self setSkewLabel:nil];
     [self setControlFrame:nil];
@@ -459,7 +459,7 @@
 	CGFloat toProgress = 1;
 
 	// Figure out how many frames we want
-	CGFloat duration = DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5) * (toProgress - fromProgress);
+	CGFloat duration = DEFAULT_DURATION * [self durationMultiplier] * (toProgress - fromProgress);
 	NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
 	
 	// Create a transaction
@@ -552,7 +552,7 @@
 	CALayer *coveredShadow = shouldFallBack? self.layerRevealShadow : self.layerFacingShadow;
 	
 	// Figure out how many frames we want
-	CGFloat duration = DEFAULT_DURATION * ([self.speedSwitch isOn]? 1 : 5);
+	CGFloat duration = DEFAULT_DURATION * [self durationMultiplier];
 	NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
 	
 	// Build an array of keyframes (each a single transform)
@@ -898,6 +898,30 @@
 - (IBAction)skewValueChanged:(id)sender {
 	UISlider *slider = sender;
 	self.skewLabel.text = [NSString stringWithFormat:@"%.04f", slider.value];
+}
+
+- (IBAction)durationValueChanged:(id)sender {
+	UISegmentedControl *segment = sender;
+	switch ([segment selectedSegmentIndex]) {
+		case 0:
+			[self setDurationMultiplier:1];
+			break;
+			
+		case 1:
+			[self setDurationMultiplier:2];
+			break;
+			
+		case 2:
+			[self setDurationMultiplier:5];
+			break;
+			
+		case 3:
+			[self setDurationMultiplier:10];
+			break;
+			
+		default:
+			break;
+	}
 }
 
 @end
