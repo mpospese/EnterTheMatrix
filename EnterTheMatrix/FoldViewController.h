@@ -17,12 +17,9 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *skewSegment;
 @property (weak, nonatomic) IBOutlet UIView *controlFrame;
 
-@property (strong, nonatomic) UIImageView *foldTop;
-@property (strong, nonatomic) UIImageView *foldBottom;
-
 @property (readonly) CGFloat skew;
-@property (readonly) CGFloat skewAngle;
 
 - (void)handlePinch:(UIGestureRecognizer *)gestureRecognizer;
+- (IBAction)skewValueChanged:(UISegmentedControl *)sender;
 
 @end

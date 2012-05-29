@@ -940,6 +940,9 @@ www.glyphish.com</string>
                                             <segment title="Normal"/>
                                             <segment title="High"/>
                                         </segments>
+                                        <connections>
+                                            <action selector="skewValueChanged:" destination="ueP-0g-58F" eventType="valueChanged" id="vI2-oj-OyF"/>
+                                        </connections>
                                     </segmentedControl>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Skew" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="AWZ-BL-e0F">
                                         <rect key="frame" x="20" y="24" width="42" height="21"/>
@@ -1621,6 +1624,133 @@ www.glyphish.com</string>
         <image name="matrix_01.png" width="480" height="360"/>
         <image name="matrix_02.png" width="480" height="360"/>
     </resources>
+    <classes>
+        <class className="AnchorPointTable" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/AnchorPointTable.h"/>
+        </class>
+        <class className="Arc" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/Arc.h"/>
+        </class>
+        <class className="BasicAnimationViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/BasicAnimationViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="animationChanged:"/>
+                <relationship kind="action" name="goPressed:"/>
+                <relationship kind="outlet" name="bar" candidateClass="UIView"/>
+                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
+                <relationship kind="outlet" name="modeSegment" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="rotateLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="rotateSwitch" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="scaleLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="scaleSwitch" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="speedSwitch" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="translateLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="translateSwitch" candidateClass="UISwitch"/>
+            </relationships>
+        </class>
+        <class className="CATransformController" superclassName="TransformController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/CATransformController.h"/>
+        </class>
+        <class className="CGAffineController" superclassName="TransformController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/CGAffineController.h"/>
+        </class>
+        <class className="FlipViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FlipViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="durationValueChanged:"/>
+                <relationship kind="action" name="skewValueChanged:"/>
+                <relationship kind="outlet" name="contentView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
+                <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="skewLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="skewSlider" candidateClass="UISlider"/>
+            </relationships>
+        </class>
+        <class className="FoldViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FoldViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="skewValueChanged:" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="bottomBar" candidateClass="UIView"/>
+                <relationship kind="outlet" name="centerBar" candidateClass="UIView"/>
+                <relationship kind="outlet" name="contentView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
+                <relationship kind="outlet" name="skewSegment" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="topBar" candidateClass="UIView"/>
+            </relationships>
+        </class>
+        <class className="GridView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/GridView.h"/>
+        </class>
+        <class className="GridViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/GridViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="lockPressed:"/>
+                <relationship kind="action" name="resetPressed:"/>
+                <relationship kind="action" name="rotateHorzChanged:"/>
+                <relationship kind="action" name="rotateVertChanged:"/>
+                <relationship kind="action" name="scaleHorzChanged:"/>
+                <relationship kind="action" name="scaleVertChanged:"/>
+                <relationship kind="action" name="translateHorzChanged:"/>
+                <relationship kind="action" name="translateVertChanged:"/>
+                <relationship kind="outlet" name="grid" candidateClass="GridView"/>
+                <relationship kind="outlet" name="horizontalPanel" candidateClass="UIView"/>
+                <relationship kind="outlet" name="lockButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="resetButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="verticalPanel" candidateClass="UIView"/>
+            </relationships>
+        </class>
+        <class className="InfoView" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/InfoView.h"/>
+            <relationships>
+                <relationship kind="outlet" name="label" candidateClass="UITextView"/>
+            </relationships>
+        </class>
+        <class className="KeyframeViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/KeyframeViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="arcPositionValueChanged:"/>
+                <relationship kind="outlet" name="arc" candidateClass="Arc"/>
+                <relationship kind="outlet" name="arcPositionSegment" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="bottomLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="controlFrame" candidateClass="UIView"/>
+                <relationship kind="outlet" name="modeSegment" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="speedSwitch" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="topLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="TransformController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TransformController.h"/>
+            <relationships>
+                <relationship kind="action" name="anchorPressed:"/>
+                <relationship kind="action" name="infoPressed:"/>
+                <relationship kind="action" name="resetPressed:"/>
+                <relationship kind="action" name="transformPressed:"/>
+                <relationship kind="outlet" name="contentView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="toolbar" candidateClass="UIToolbar"/>
+            </relationships>
+        </class>
+        <class className="TransformTable" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TransformTable.h"/>
+            <relationships>
+                <relationship kind="action" name="resetRotationPressed:"/>
+                <relationship kind="action" name="resetScalePressed:"/>
+                <relationship kind="action" name="resetSkewPressed:"/>
+                <relationship kind="action" name="resetTranslatePressed:"/>
+                <relationship kind="action" name="rotateXChanged:"/>
+                <relationship kind="action" name="rotateYChanged:"/>
+                <relationship kind="action" name="rotateZChanged:"/>
+                <relationship kind="action" name="rotationAngleChanged:"/>
+                <relationship kind="action" name="scaleLockPressed:"/>
+                <relationship kind="action" name="scaleXChanged:"/>
+                <relationship kind="action" name="scaleYChanged:"/>
+                <relationship kind="action" name="scaleZChanged:"/>
+                <relationship kind="action" name="skewChanged:"/>
+                <relationship kind="action" name="translateXChanged:"/>
+                <relationship kind="action" name="translateYChanged:"/>
+                <relationship kind="action" name="translateZChanged:"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>
