@@ -21,6 +21,7 @@
 @property (assign, nonatomic, getter = isFolding) BOOL folding;
 @property (assign, nonatomic) CGFloat pinchStartGap;
 @property (assign, nonatomic) CGFloat lastProgress;
+@property (assign, nonatomic) CGFloat durationMultiplier;
 
 @property (strong, nonatomic) UIView *animationView;
 @property (strong, nonatomic) CALayer *perspectiveLayer;
@@ -59,12 +60,39 @@
 @synthesize bottomBar;
 @synthesize skewSegment;
 @synthesize controlFrame;
+@synthesize durationMultiplier = _durationMultiplier;
+
+- (void)doInit
+{
+	_durationMultiplier = 1;
+}
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        // Custom initialization
+		[self doInit];
+    }
+    return self;
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+		[self doInit];
+    }
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        // Custom initialization
+		[self doInit];
     }
     return self;
 }
@@ -156,7 +184,7 @@
 - (void)setDropShadowForLayer:(CALayer *)layer
 {
 	layer.shadowOpacity = 0.5;
-	layer.shadowOffset = CGSizeMake(0, 1);
+	layer.shadowOffset = CGSizeMake(0, 3);
 }
 
 #pragma mark - Gesture handlers
@@ -218,6 +246,29 @@
 	CATransform3D transform = CATransform3DIdentity;	
 	transform.m34 = [self skew];
 	[[self perspectiveLayer] setSublayerTransform:transform];
+}
+
+- (IBAction)durationValueChanged:(UISegmentedControl *)sender {
+	switch ([sender selectedSegmentIndex]) {
+		case 0:
+			[self setDurationMultiplier:1];
+			break;
+			
+		case 1:
+			[self setDurationMultiplier:2];
+			break;
+			
+		case 2:
+			[self setDurationMultiplier:5];
+			break;
+			
+		case 3:
+			[self setDurationMultiplier:10];
+			break;
+			
+		default:
+			break;
+	}
 }
 
 #pragma mark - UIGestureRecognizerDelegate
@@ -350,7 +401,7 @@
 	[self setFolding:YES];
 	
 	// Figure out how many frames we want
-	CGFloat duration = DEFAULT_DURATION;
+	CGFloat duration = DEFAULT_DURATION * [self durationMultiplier];
 	NSUInteger frameCount = ceilf(duration * 60); // we want 60 FPS
 		
 	// Create a transaction
@@ -583,11 +634,17 @@
 	
 	// reduce shadow on topSleeve slightly so it won't shade the upperFold panel so much
 	CGRect topBounds = self.topSleeve.bounds;
-	topBounds.size.height -= 1; // make it shorter by 1
+	topBounds.size.height -= 3; // make it shorter by 3
 	[self.topSleeve setShadowPath:[[UIBezierPath bezierPathWithRect:topBounds] CGPath]];	
 	
-	[upperFold setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([upperFold bounds], foldInsets.left, foldInsets.top)] CGPath]];	
-	[lowerFold setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([lowerFold bounds], foldInsets.left, foldInsets.top)] CGPath]];
+	CGRect upperFoldBounds = CGRectInset([upperFold bounds], foldInsets.left, foldInsets.top);
+	upperFoldBounds.size.height -= 1;
+	[upperFold setShadowPath:[[UIBezierPath bezierPathWithRect:upperFoldBounds] CGPath]];	
+	
+	CGRect lowerFoldBounds = CGRectInset([lowerFold bounds], foldInsets.left, foldInsets.top);
+	lowerFoldBounds.size.height -= 1;
+	[lowerFold setShadowPath:[[UIBezierPath bezierPathWithRect:lowerFoldBounds] CGPath]];
+	
 	[self.bottomSleeve setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bottomSleeve bounds]] CGPath]];
 	
 	// Perspective is best proportional to the height of the pieces being folded away, rather than a fixed value

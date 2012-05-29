@@ -18,8 +18,10 @@
 @property (weak, nonatomic) IBOutlet UIView *controlFrame;
 
 @property (readonly) CGFloat skew;
+@property (readonly, nonatomic) CGFloat durationMultiplier;
 
 - (void)handlePinch:(UIGestureRecognizer *)gestureRecognizer;
 - (IBAction)skewValueChanged:(UISegmentedControl *)sender;
+- (IBAction)durationValueChanged:(UISegmentedControl *)sender;
 
 @end
