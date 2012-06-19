@@ -768,20 +768,25 @@
 	[self.layerFront addSublayer:self.layerFrontShadow];
 	self.layerFrontShadow.frame = CGRectInset(self.layerFront.bounds, insets.left, insets.top);
 	self.layerFrontShadow.opacity = 0.0;
-	self.layerFrontShadow.colors = [NSArray arrayWithObjects:(id)[[[UIColor blackColor] colorWithAlphaComponent:0.5] CGColor], (id)[UIColor blackColor].CGColor, (id)[[UIColor clearColor] CGColor], nil];
-	//self.layerFrontShadow.colors = [NSArray arrayWithObjects:(id)[UIColor blackColor].CGColor, (id)[[UIColor clearColor] CGColor], nil];
-	self.layerFrontShadow.startPoint = CGPointMake(0, 0.5);
-	self.layerFrontShadow.endPoint = CGPointMake(0.5, 0.5);
-	self.layerFrontShadow.locations = [NSArray arrayWithObjects:[NSNumber numberWithDouble:0], [NSNumber numberWithDouble:0.1], [NSNumber numberWithDouble:1], nil];
+	if (forwards)
+		self.layerFrontShadow.colors = [NSArray arrayWithObjects:(id)[[[UIColor blackColor] colorWithAlphaComponent:0.5] CGColor], (id)[UIColor blackColor].CGColor, (id)[[UIColor clearColor] CGColor], nil];
+	else
+		self.layerFrontShadow.colors = [NSArray arrayWithObjects:(id)[[UIColor clearColor] CGColor], (id)[UIColor blackColor].CGColor, (id)[[[UIColor blackColor] colorWithAlphaComponent:0.5] CGColor], nil];
+	self.layerFrontShadow.startPoint = CGPointMake(vertical? 0.5 : forwards? 0 : 0.5, vertical? forwards? 0 : 0.5 : 0.5);
+	self.layerFrontShadow.endPoint = CGPointMake(vertical? 0.5 : forwards? 0.5 : 1, vertical? forwards? 0.5 : 1 : 0.5);
+	self.layerFrontShadow.locations = [NSArray arrayWithObjects:[NSNumber numberWithDouble:0], [NSNumber numberWithDouble:forwards? 0.1 : 0.9], [NSNumber numberWithDouble:1], nil];
 	
 	self.layerBackShadow = [CAGradientLayer layer];
 	[self.layerBack addSublayer:self.layerBackShadow];
 	self.layerBackShadow.frame = CGRectInset(self.layerBack.bounds, insets.left, insets.top);
 	self.layerBackShadow.opacity = 0.1;
-	self.layerBackShadow.colors = [NSArray arrayWithObjects:(id)[[[UIColor blackColor] colorWithAlphaComponent:0.5] CGColor], (id)[UIColor blackColor].CGColor, (id)[[UIColor clearColor] CGColor], nil];
-	self.layerBackShadow.startPoint = CGPointMake(0.5, 0.5);
-	self.layerBackShadow.endPoint = CGPointMake(1, 0.5);
-	self.layerBackShadow.locations = [NSArray arrayWithObjects:[NSNumber numberWithDouble:0], [NSNumber numberWithDouble:0.9], [NSNumber numberWithDouble:1], nil];
+	if (forwards)
+		self.layerBackShadow.colors = [NSArray arrayWithObjects:(id)[[UIColor clearColor] CGColor], (id)[UIColor blackColor].CGColor, (id)[[[UIColor blackColor] colorWithAlphaComponent:0.5] CGColor], nil];
+	else
+		self.layerBackShadow.colors = [NSArray arrayWithObjects:(id)[[[UIColor blackColor] colorWithAlphaComponent:0.5] CGColor], (id)[UIColor blackColor].CGColor, (id)[[UIColor clearColor] CGColor], nil];
+	self.layerBackShadow.startPoint = CGPointMake(vertical? 0.5 : forwards? 0.5 : 0, vertical? forwards? 0.5 : 0 : 0.5);
+	self.layerBackShadow.endPoint = CGPointMake(vertical? 0.5 : forwards? 1 : 0.5, vertical? forwards? 1 : 0.5 : 0.5);
+	self.layerBackShadow.locations = [NSArray arrayWithObjects:[NSNumber numberWithDouble:0], [NSNumber numberWithDouble:forwards? 0.9 : 0.1], [NSNumber numberWithDouble:1], nil];
 	
 	if (!inward)
 	{
