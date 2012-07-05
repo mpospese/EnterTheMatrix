@@ -12,8 +12,7 @@
 
 #define FOLD_HEIGHT	120.
 #define DEFAULT_DURATION 0.3
-#define FOLD_SHADOW_OPACITY 0.5
-#define FOLD_SHADOW_ADJUSTMENT_FACTOR 0.5
+#define FOLD_SHADOW_OPACITY 0.25
 
 @interface FoldViewController ()
 
@@ -27,8 +26,8 @@
 @property (strong, nonatomic) CALayer *perspectiveLayer;
 @property (strong, nonatomic) CALayer *topSleeve;
 @property (strong, nonatomic) CALayer *bottomSleeve;
-@property (strong, nonatomic) CALayer *upperFoldShadow;
-@property (strong, nonatomic) CALayer *lowerFoldShadow;
+@property (strong, nonatomic) CAGradientLayer *upperFoldShadow;
+@property (strong, nonatomic) CAGradientLayer *lowerFoldShadow;
 @property (strong, nonatomic) CALayer *firstJointLayer;
 @property (strong, nonatomic) CALayer *secondJointLayer;
 @property (assign, nonatomic) CGPoint animationCenter;
@@ -310,11 +309,11 @@
 	double angle = radians(90 * progress);
 	double cosine = cos(angle);
 	double foldHeight = cosine * FOLD_HEIGHT;
-	CGFloat scale = [[UIScreen mainScreen] scale];
+	//CGFloat scale = [[UIScreen mainScreen] scale];
 
 	// to prevent flickering on non-retina devices (due to 1 point white border at edge of top and bottom panels),
 	// keep height in pixels (not points) an integer, and back out correct angle from there
-	foldHeight = round(foldHeight * scale) / scale;
+	/*foldHeight = round(foldHeight * scale) / scale;
 	angle = acos(foldHeight / FOLD_HEIGHT);
 	if (((int)(foldHeight * scale)) % 2 == 1)
 	{
@@ -324,7 +323,7 @@
 	else 
 	{
 		[self.animationView setCenter:[self animationCenter]];
-	}
+	}*/
 
 	[CATransaction begin];
 	[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
@@ -334,9 +333,8 @@
 	self.topSleeve.transform = CATransform3DMakeRotation(1*angle, 1, 0, 0);
 	self.bottomSleeve.transform = CATransform3DMakeRotation(-1*angle, 1, 0, 0);
 	
-	BOOL inverse = [self isInverse];
-	self.upperFoldShadow.opacity = inverse? 0 : FOLD_SHADOW_OPACITY * (1- cosine);
-	self.lowerFoldShadow.opacity = ((inverse? 1 : FOLD_SHADOW_ADJUSTMENT_FACTOR) * FOLD_SHADOW_OPACITY) * (1 - cosine);
+	self.upperFoldShadow.opacity = FOLD_SHADOW_OPACITY * (1- cosine);
+	self.lowerFoldShadow.opacity = FOLD_SHADOW_OPACITY * (1 - cosine);
 	
 	self.perspectiveLayer.bounds = (CGRect){CGPointZero, CGSizeMake(self.perspectiveLayer.bounds.size.width, foldHeight)};
 
@@ -416,7 +414,6 @@
 
 	BOOL vertical = YES;
 	BOOL forwards = finish != [self isFolded];
-	BOOL inverse = [self isInverse];
 	NSString *rotationKey = vertical? @"transform.rotation.x" : @"transform.rotation.y";
 	double factor = (vertical? 1 : - 1) * M_PI / 180;
 	CGFloat fromProgress = [self lastProgress];
@@ -457,8 +454,7 @@
 
 	// Build an array of keyframes for perspectiveLayer.bounds.size.height
 	NSMutableArray* arrayHeight = [NSMutableArray arrayWithCapacity:frameCount + 1];
-	NSMutableArray* arrayUpperShadow = inverse? nil : [NSMutableArray arrayWithCapacity:frameCount + 1];
-	NSMutableArray* arrayLowerShadow = [NSMutableArray arrayWithCapacity:frameCount + 1];
+	NSMutableArray* arrayShadow = [NSMutableArray arrayWithCapacity:frameCount + 1];
 	CGFloat progress;
 	CGFloat cosine;
 	CGFloat cosHeight;
@@ -474,9 +470,7 @@
 		[arrayHeight addObject:[NSNumber numberWithFloat:cosHeight]];
 		
 		cosShadow = FOLD_SHADOW_OPACITY * (1 - cosine);
-		if (!inverse)
-			[arrayUpperShadow addObject:[NSNumber numberWithFloat:cosShadow]];
-		[arrayLowerShadow addObject:[NSNumber numberWithFloat:inverse? cosShadow : cosShadow * (FOLD_SHADOW_ADJUSTMENT_FACTOR)]];
+		[arrayShadow addObject:[NSNumber numberWithFloat:cosShadow]];
 	}
 	
 	// resize height of the 2 folding panels along a cosine curve.  This is necessary to maintain the 2nd joint in the center
@@ -488,18 +482,14 @@
 	[self.perspectiveLayer addAnimation:keyAnimation forKey:nil];
 	
 	// Dim the 2 folding panels as they fold away from us
-	// Note that 2 slightly different endpoint opacities are used to help distinguish the upper and lower panels
-	if (!inverse)
-	{
-		keyAnimation = [CAKeyframeAnimation animationWithKeyPath:@"opacity"];
-		[keyAnimation setValues:arrayUpperShadow];
-		[keyAnimation setFillMode:kCAFillModeForwards];
-		[keyAnimation setRemovedOnCompletion:NO];
-		[self.upperFoldShadow addAnimation:keyAnimation forKey:nil];
-	}
+	keyAnimation = [CAKeyframeAnimation animationWithKeyPath:@"opacity"];
+	[keyAnimation setValues:arrayShadow];
+	[keyAnimation setFillMode:kCAFillModeForwards];
+	[keyAnimation setRemovedOnCompletion:NO];
+	[self.upperFoldShadow addAnimation:keyAnimation forKey:nil];
 	
 	keyAnimation = [CAKeyframeAnimation animationWithKeyPath:@"opacity"];
-	[keyAnimation setValues:arrayLowerShadow];
+	[keyAnimation setValues:arrayShadow];
 	[keyAnimation setFillMode:kCAFillModeForwards];
 	[keyAnimation setRemovedOnCompletion:NO];
 	[self.lowerFoldShadow addAnimation:keyAnimation forKey:nil];
@@ -615,16 +605,22 @@
 	self.firstJointLayer.position = CGPointMake(vertical? width/2 : 0, vertical? 0 : width / 2);
 	
 	// Shadow layers to add shadowing to the 2 folding panels
-	self.upperFoldShadow = [CALayer layer];
+	self.upperFoldShadow = [CAGradientLayer layer];
 	[upperFold addSublayer:self.upperFoldShadow];
 	self.upperFoldShadow.frame = CGRectInset(upperFold.bounds, foldInsets.left, foldInsets.top);
-	self.upperFoldShadow.backgroundColor = [UIColor blackColor].CGColor;
+	//self.upperFoldShadow.backgroundColor = [UIColor blackColor].CGColor;
+	self.upperFoldShadow.colors = [NSArray arrayWithObjects:(id)[UIColor blackColor].CGColor, (id)[[UIColor clearColor] CGColor], nil];	
+	self.upperFoldShadow.startPoint = CGPointMake(vertical? 0.5 : 0, vertical? 0 : 0.5);
+	self.upperFoldShadow.endPoint = CGPointMake(vertical? 0.5 : 1, vertical? 1 : 0.5);
 	self.upperFoldShadow.opacity = 0;
 	
-	self.lowerFoldShadow = [CALayer layer];
+	self.lowerFoldShadow = [CAGradientLayer layer];
 	[lowerFold addSublayer:self.lowerFoldShadow];
 	self.lowerFoldShadow.frame = CGRectInset(lowerFold.bounds, foldInsets.left, foldInsets.top);
-	self.lowerFoldShadow.backgroundColor = [UIColor blackColor].CGColor;
+	//self.lowerFoldShadow.backgroundColor = [UIColor blackColor].CGColor;
+	self.lowerFoldShadow.colors = [NSArray arrayWithObjects:(id)[UIColor blackColor].CGColor, (id)[[UIColor blackColor] colorWithAlphaComponent:0.2].CGColor, nil];	
+	self.lowerFoldShadow.startPoint = CGPointMake(vertical? 0.5 : 0, vertical? 0 : 0.5);
+	self.lowerFoldShadow.endPoint = CGPointMake(vertical? 0.5 : 1, vertical? 1 : 0.5);
 	self.lowerFoldShadow.opacity = 0;
 		
 	[self setDropShadowForLayer:self.topSleeve];

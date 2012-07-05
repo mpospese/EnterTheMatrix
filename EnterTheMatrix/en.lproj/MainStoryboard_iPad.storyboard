@@ -937,7 +937,7 @@ www.glyphish.com</string>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" image="matrix_02.png" id="hdi-ui-QMv">
-                                                        <rect key="frame" x="10" y="10" width="480" height="119"/>
+                                                        <rect key="frame" x="10" y="9" width="480" height="121"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     </imageView>
                                                 </subviews>
@@ -968,7 +968,7 @@ www.glyphish.com</string>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="bottom" image="matrix_02.png" id="6sc-yr-EjQ">
-                                                        <rect key="frame" x="10" y="1" width="480" height="119"/>
+                                                        <rect key="frame" x="10" y="0.0" width="480" height="120"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     </imageView>
                                                 </subviews>
