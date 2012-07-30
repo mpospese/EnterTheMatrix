@@ -11,9 +11,18 @@
 
 @interface CATransformController ()
 
+@property (weak, nonatomic) IBOutlet UIView *backgroundView;
+
 @end
  
 @implementation CATransformController
+@synthesize backgroundView;
+
+- (void)viewDidLoad
+{
+	[super viewDidLoad];
+	[self.backgroundView setBackgroundColor:[[UIColor colorWithPatternImage:[UIImage imageNamed:@"Blueprint"]] colorWithAlphaComponent:0.5]];
+}
 
 #pragma mark - Property
 
@@ -27,4 +36,8 @@
 	return @"matrix_01";
 }
 
+- (void)viewDidUnload {
+	[self setBackgroundView:nil];
+	[super viewDidUnload];
+}
 @end

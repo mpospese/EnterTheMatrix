@@ -41,7 +41,6 @@
 		4D6E91E51511F46D00B7D1D1 /* matrix_01@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D6E91E41511F46D00B7D1D1 /* matrix_01@2x.png */; };
 		4D6E91E81511F47900B7D1D1 /* matrix_04@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D6E91E61511F47900B7D1D1 /* matrix_04@2x.png */; };
 		4D6E91E91511F47900B7D1D1 /* matrix_03@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D6E91E71511F47900B7D1D1 /* matrix_03@2x.png */; };
-		4D6E91F01511FCEE00B7D1D1 /* Blueprint - iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D6E91EF1511FCEE00B7D1D1 /* Blueprint - iPad.png */; };
 		4D74961F151405CF00E6B879 /* Refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D74961D151405CF00E6B879 /* Refresh.png */; };
 		4D7496251514077600E6B879 /* Refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D7496241514077600E6B879 /* Refresh@2x.png */; };
 		4D886B741568F27100F9A5CF /* Glyphish license.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4D886B731568F27000F9A5CF /* Glyphish license.txt */; };
@@ -73,6 +72,8 @@
 		4DE4181914FDB6930007800B /* Bacon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4DE4181714FDB6930007800B /* Bacon.png */; };
 		4DE4181A14FDB6930007800B /* Bacon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4DE4181814FDB6930007800B /* Bacon@2x.png */; };
 		4DE4182914FE3F0E0007800B /* InfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DE4182814FE3F0E0007800B /* InfoView.m */; };
+		4DF4C9B615C69ECB003C21CA /* Blueprint.png in Resources */ = {isa = PBXBuildFile; fileRef = 4DF4C9B415C69ECB003C21CA /* Blueprint.png */; };
+		4DF4C9B715C69ECB003C21CA /* Blueprint@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4DF4C9B515C69ECB003C21CA /* Blueprint@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -117,7 +118,6 @@
 		4D6E91E41511F46D00B7D1D1 /* matrix_01@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "matrix_01@2x.png"; sourceTree = "<group>"; };
 		4D6E91E61511F47900B7D1D1 /* matrix_04@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "matrix_04@2x.png"; sourceTree = "<group>"; };
 		4D6E91E71511F47900B7D1D1 /* matrix_03@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "matrix_03@2x.png"; sourceTree = "<group>"; };
-		4D6E91EF1511FCEE00B7D1D1 /* Blueprint - iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Blueprint - iPad.png"; sourceTree = "<group>"; };
 		4D74961D151405CF00E6B879 /* Refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Refresh.png; sourceTree = "<group>"; };
 		4D7496241514077600E6B879 /* Refresh@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Refresh@2x.png"; sourceTree = "<group>"; };
 		4D886B731568F27000F9A5CF /* Glyphish license.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Glyphish license.txt"; sourceTree = "<group>"; };
@@ -163,6 +163,8 @@
 		4DE4181814FDB6930007800B /* Bacon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Bacon@2x.png"; sourceTree = "<group>"; };
 		4DE4182714FE3F0D0007800B /* InfoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoView.h; sourceTree = "<group>"; };
 		4DE4182814FE3F0E0007800B /* InfoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InfoView.m; sourceTree = "<group>"; };
+		4DF4C9B415C69ECB003C21CA /* Blueprint.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Blueprint.png; sourceTree = "<group>"; };
+		4DF4C9B515C69ECB003C21CA /* Blueprint@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Blueprint@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -276,7 +278,8 @@
 			children = (
 				4D56F74B151DD22A0040C70D /* Dot@2x.png */,
 				4D56F74C151DD22A0040C70D /* Dot.png */,
-				4D6E91EF1511FCEE00B7D1D1 /* Blueprint - iPad.png */,
+				4DF4C9B415C69ECB003C21CA /* Blueprint.png */,
+				4DF4C9B515C69ECB003C21CA /* Blueprint@2x.png */,
 				4DBE7B7E14FD16DE008174E8 /* Lock.png */,
 				4DBE7B7F14FD16DE008174E8 /* Lock@2x.png */,
 				4DBE7B8414FD19E7008174E8 /* Unlock.png */,
@@ -397,7 +400,6 @@
 				4D6E91E51511F46D00B7D1D1 /* matrix_01@2x.png in Resources */,
 				4D6E91E81511F47900B7D1D1 /* matrix_04@2x.png in Resources */,
 				4D6E91E91511F47900B7D1D1 /* matrix_03@2x.png in Resources */,
-				4D6E91F01511FCEE00B7D1D1 /* Blueprint - iPad.png in Resources */,
 				4D74961F151405CF00E6B879 /* Refresh.png in Resources */,
 				4D7496251514077600E6B879 /* Refresh@2x.png in Resources */,
 				4D56F73E151DC5480040C70D /* Anchor.png in Resources */,
@@ -408,6 +410,8 @@
 				4D886B781568F2E300F9A5CF /* info-mini.png in Resources */,
 				4D886B791568F2E300F9A5CF /* info-mini@2x.png in Resources */,
 				4D886B7B1568F3DC00F9A5CF /* README.md in Resources */,
+				4DF4C9B615C69ECB003C21CA /* Blueprint.png in Resources */,
+				4DF4C9B715C69ECB003C21CA /* Blueprint@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
