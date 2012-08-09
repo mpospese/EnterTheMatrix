@@ -10,8 +10,10 @@
 #import "MPTransform.h"
 #import "AnchorPointTable.h"
 
-#define TRANSFORM_LABEL_TAG				700
-#define TRANSFORM_CONTAINER_TAG			701
+#define TRANSLATE_LABEL_TAG				700
+#define SCALE_LABEL_TAG					701
+#define ROTATE_LABEL_TAG					702
+#define TRANSFORM_CONTAINER_TAG			703
 
 @interface TransformController : UIViewController<AnchorPointDelegate>
 {
@@ -35,7 +37,6 @@
 - (IBAction)anchorPressed:(id)sender;
 
 - (UIView *)makeContainer;
-- (UILabel *)makeLabel;
 - (void)setText:(NSString *)text forLabel:(UILabel *)label;
 - (void)positionLabel:(UILabel *)label aboveGesture:(UIGestureRecognizer *)gestureRecognizer;
 - (void)updateTransform;

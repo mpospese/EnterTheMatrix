@@ -17,7 +17,9 @@
 #define AFFINE_TRANSFORM_KEY_PATH	@"affineTransform"
 #define ANCHOR_DOT_TAG			6000
 
-@interface TransformController ()
+@interface TransformController()<UIGestureRecognizerDelegate>
+
+@property (assign, nonatomic) int gestureCounter;
 
 @end
 
@@ -28,6 +30,7 @@
 @synthesize toolbar;
 @synthesize popover;
 @synthesize anchorPoint;
+@synthesize gestureCounter = _gestureCounter;
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
@@ -66,12 +69,15 @@
 	[[self.contentView layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.contentView bounds]] CGPath]];
 
 	UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+	panGesture.delegate = self;
 	[self.contentView addGestureRecognizer:panGesture];
 	
 	UIPinchGestureRecognizer *pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
+	pinchGesture.delegate = self;
 	[self.view addGestureRecognizer:pinchGesture];
 	
 	UIRotationGestureRecognizer *rotateGesture = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotation:)];
+	rotateGesture.delegate = self;
 	[self.view addGestureRecognizer:rotateGesture];
 }
 
@@ -330,42 +336,99 @@
 
 #pragma mark - Labels
 
+- (void)incrementGestureCounter
+{
+	[self setGestureCounter:[self gestureCounter] + 1];
+}
+
+- (void)decrementGestureCounter
+{
+	[self setGestureCounter:MAX(0, [self gestureCounter] - 1)];
+}
+
 - (UIView *)makeContainer
 {
-	[[self.view viewWithTag:TRANSFORM_CONTAINER_TAG] removeFromSuperview];
+	UIView *view = [self.view viewWithTag:TRANSFORM_CONTAINER_TAG];
 	
-	UIView *view = [[UIView alloc] init];
-	view.backgroundColor = [UIColor whiteColor];
-	view.tag = TRANSFORM_CONTAINER_TAG;
-	view.layer.cornerRadius = 5;
-	view.layer.shadowOffset = CGSizeMake(0, 3);
-	view.layer.shadowOpacity = 0.5;
-	view.layer.zPosition = 1024; // make sure it stays well above our contentView
+	if (!view)
+	{
+		view = [[UIView alloc] init];
+		view.backgroundColor = [UIColor whiteColor];
+		view.tag = TRANSFORM_CONTAINER_TAG;
+		view.layer.cornerRadius = 5;
+		view.layer.shadowOffset = CGSizeMake(0, 3);
+		view.layer.shadowOpacity = 0.5;
+		view.layer.zPosition = 4096; // make sure it stays well above our contentView
+		
+		UILabel *translateLabel = [self makeLabel:TRANSLATE_LABEL_TAG];
+		UILabel *scaleLabel = [self makeLabel:SCALE_LABEL_TAG];
+		UILabel *rotateLabel = [self makeLabel:ROTATE_LABEL_TAG];
+		
+		translateLabel.text = [self translateText];
+		[translateLabel sizeToFit];
+		scaleLabel.text = [self scaleText];
+		[scaleLabel sizeToFit];
+		rotateLabel.text = [self rotateText];
+		[rotateLabel sizeToFit];
+		
+		CGFloat scale = [[UIScreen mainScreen] scale];
+		CGFloat minWidth = MAX(translateLabel.bounds.size.width, MAX(scaleLabel.bounds.size.width, rotateLabel.bounds.size.width)) + 16;
+		CGFloat top = 5;
+		translateLabel.frame = CGRectMake(roundf(((minWidth - translateLabel.bounds.size.width) / 2) * scale) / scale, top, translateLabel.bounds.size.width, translateLabel.bounds.size.height);
+		top += translateLabel.bounds.size.height + 5;
+		scaleLabel.frame = CGRectMake(roundf(((minWidth - scaleLabel.bounds.size.width) / 2) * scale) / scale, top, scaleLabel.bounds.size.width, scaleLabel.bounds.size.height);
+		top += scaleLabel.bounds.size.height + 5;
+		rotateLabel.frame = CGRectMake(roundf(((minWidth - rotateLabel.bounds.size.width) / 2) * scale) / scale, top, rotateLabel.bounds.size.width, rotateLabel.bounds.size.height);
+		top += rotateLabel.bounds.size.height + 5;
+		
+		view.bounds = CGRectMake(0, 0, minWidth, top);
+		[view addSubview:translateLabel];
+		[view addSubview:scaleLabel];
+		[view addSubview:rotateLabel];
+	}
 	
 	return view;
 }
 
-- (UILabel *)makeLabel
+- (UILabel *)makeLabel:(int)tag
 {
 	UILabel *label = [[UILabel alloc] init];
 	label.backgroundColor = [UIColor clearColor];
 	label.textAlignment = UITextAlignmentCenter;
 	label.textColor = [UIColor blackColor];
+	label.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
 	label.font = [UIFont fontWithName:@"Menlo" size:18];
-	label.tag = TRANSFORM_LABEL_TAG;
+	label.tag = tag;
 	return label;
 }
 
 - (void)setText:(NSString *)text forLabel:(UILabel *)label
 {
 	[label setText:text];
-	[label sizeToFit];
-	label.frame = CGRectMake(8, 5, label.bounds.size.width, label.bounds.size.height);
-	[label superview].bounds = CGRectMake(0, 0, label.bounds.size.width + 16, label.bounds.size.height + 10);	
+
+	UIView *container = [label superview];
+	CGFloat width = 0, bottom = 0;
+	for (UILabel *subview in [container subviews])
+	{
+		[subview sizeToFit];
+		width = MAX(width, subview.bounds.size.width);
+		bottom = MAX(bottom, subview.frame.origin.y + subview.frame.size.height);
+	}
+	
+	width += 16; bottom += 5;
+	
+	CGFloat scale = [[UIScreen mainScreen] scale];
+	if (((int)roundf(width * scale) % 2) != 0)
+		width += (1 / scale);
+	if (((int)roundf(bottom * scale) % 2) != 0)
+		bottom += (1 / scale);
+	label.frame = CGRectMake(roundf(((width - label.bounds.size.width) / 2) * scale) / scale, label.frame.origin.y, label.bounds.size.width, label.bounds.size.height);
+	container.bounds = CGRectMake(0, 0, width, bottom);
 }
 
 - (void)positionLabel:(UILabel *)label aboveGesture:(UIGestureRecognizer *)gestureRecognizer
 {
+	// find the uppermost touch
 	CGPoint position = [gestureRecognizer locationInView:self.view];
 	for (NSUInteger i = 0; i < [gestureRecognizer numberOfTouches];i++)
 	{
@@ -374,31 +437,62 @@
 			position.y = location.y;
 	}
 	
-	position.y = position.y - 50;
 	UIView *container = [label superview];
+	
+	// position label a bit above the uppermost touch (so user's fingers don't obscure it)
+	position.y = position.y - 76;
+	
+	// But keep the label entirely on screen
+	if (position.y < container.bounds.size.height / 2)
+		position.y = container.bounds.size.height / 2;
+	if (position. y > self.view.bounds.size.height - (container.bounds.size.height / 2))
+		position.y = self.view.bounds.size.height - (container.bounds.size.height / 2);
+	if (position.x < container.bounds.size.width / 2)
+		position.x = container.bounds.size.width / 2;
+	if (position. x > self.view.bounds.size.width - (container.bounds.size.width / 2))
+		position.x = self.view.bounds.size.width - (container.bounds.size.width / 2);
+	
 	container.center = position;
 	[[container layer] setShadowPath:[[UIBezierPath bezierPathWithRoundedRect:[container bounds] cornerRadius:5] CGPath]];	
 }
 
 - (void)setGesture:(UIGestureRecognizer *)gestureRecognizer translationforLabel:(UILabel *)label
 {
-	NSString *labelText = [self is3D]? [NSString stringWithFormat:@"Translation {%d, %d, %d}", (int)roundf(self.transform.translateX), (int)roundf(self.transform.translateY), (int)roundf(self.transform.translateZ)] : [NSString stringWithFormat:@"Translation {%d, %d}", (int)roundf(self.transform.translateX), (int)roundf(self.transform.translateY)];
+	NSString *labelText = [self translateText];
 	[self setText:labelText forLabel:label];
-	[self positionLabel:label aboveGesture:gestureRecognizer];
+	if (gestureRecognizer)
+		[self positionLabel:label aboveGesture:gestureRecognizer];
 }
 
 - (void)setGesture:(UIGestureRecognizer *)gestureRecognizer scaleforLabel:(UILabel *)label
 {
-	NSString *labelText = [self is3D]? [NSString stringWithFormat:@"Scale {%.03f, %.03f, %.03f}", self.transform.scaleX, self.transform.scaleY, self.transform.scaleZ] : [NSString stringWithFormat:@"Scale {%.03f, %.03f}", self.transform.scaleX, self.transform.scaleY];
+	NSString *labelText = [self scaleText];
 	[self setText:labelText forLabel:label];
-	[self positionLabel:label aboveGesture:gestureRecognizer];
+	if (gestureRecognizer)
+		[self positionLabel:label aboveGesture:gestureRecognizer];
 }
 
 - (void)setGesture:(UIGestureRecognizer *)gestureRecognizer rotationforLabel:(UILabel *)label
 {
-	NSString *labelText = [self is3D]? [NSString stringWithFormat:@"Rotation %d° about vector {%.03f, %.03f, %.03f}",(int)roundf(self.transform.rotationAngle), self.transform.rotationX, self.transform.rotationY, self.transform.rotationZ] : [NSString stringWithFormat:@"Rotation %d°", (int)roundf(self.transform.rotationAngle)];
+	NSString *labelText = [self rotateText];
 	[self setText:labelText forLabel:label];
-	[self positionLabel:label aboveGesture:gestureRecognizer];
+	if (gestureRecognizer)
+		[self positionLabel:label aboveGesture:gestureRecognizer];
+}
+
+- (NSString *)translateText
+{
+	return [self is3D]? [NSString stringWithFormat:@"Translation {%d, %d, %d}", (int)roundf(self.transform.translateX), (int)roundf(self.transform.translateY), (int)roundf(self.transform.translateZ)] : [NSString stringWithFormat:@"Translation {%d, %d}", (int)roundf(self.transform.translateX), (int)roundf(self.transform.translateY)];
+}
+
+- (NSString *)scaleText
+{
+	return [self is3D]? [NSString stringWithFormat:@"Scale {%.03f, %.03f, %.03f}", self.transform.scaleX, self.transform.scaleY, self.transform.scaleZ] : [NSString stringWithFormat:@"Scale {%.03f, %.03f}", self.transform.scaleX, self.transform.scaleY];
+}
+
+- (NSString *)rotateText
+{
+	return [self is3D]? [NSString stringWithFormat:@"Rotation %d° about vector {%.03f, %.03f, %.03f}",(int)roundf(self.transform.rotationAngle), self.transform.rotationX, self.transform.rotationY, self.transform.rotationZ] : [NSString stringWithFormat:@"Rotation %d°", (int)roundf(self.transform.rotationAngle)];
 }
 
 #pragma mark - Gesture Recognizers
@@ -410,10 +504,10 @@
 	
 	if (state == UIGestureRecognizerStateBegan)
 	{
-		UILabel *label = [self makeLabel];
+		[self incrementGestureCounter];
 		UIView *container = [self makeContainer];
-		[container addSubview:label];
-		[self setGesture:gestureRecognizer translationforLabel:label];
+		UILabel *label = (UILabel *)[container viewWithTag:TRANSLATE_LABEL_TAG];
+		[self positionLabel:label aboveGesture:gestureRecognizer];
 		[self.view addSubview:container];
 	}
 	else if (state == UIGestureRecognizerStateChanged)
@@ -425,12 +519,15 @@
 			[self.transform offset:diff];
 		[self updateTransform];
 		
-		UILabel *label = (UILabel *)[self.view viewWithTag:TRANSFORM_LABEL_TAG];
+		UILabel *label = (UILabel *)[self.view viewWithTag:TRANSLATE_LABEL_TAG];
 		[self setGesture:gestureRecognizer translationforLabel:label];
 	}
 	else if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
 	{
-		[[self.view viewWithTag:TRANSFORM_CONTAINER_TAG] removeFromSuperview];
+		// hide tip when last gesture recognizer ends
+		[self decrementGestureCounter];
+		if ([self gestureCounter] <= 0)
+			[[self.view viewWithTag:TRANSFORM_CONTAINER_TAG] removeFromSuperview];
 	}
 	
 	lastPoint = currentPoint;
@@ -439,15 +536,15 @@
 - (void)handlePinch:(UIPinchGestureRecognizer *)gestureRecognizer
 {
 	CGFloat currentScale = [gestureRecognizer scale];
-	CGPoint currentPoint = [gestureRecognizer locationInView:self.view];
+	//CGPoint currentPoint = [gestureRecognizer locationInView:self.view];
 	UIGestureRecognizerState state = [gestureRecognizer state];
 	
 	if (state == UIGestureRecognizerStateBegan)
 	{
-		UILabel *label = [self makeLabel];
+		[self incrementGestureCounter];
 		UIView *container = [self makeContainer];
-		[container addSubview:label];
-		[self setGesture:gestureRecognizer scaleforLabel:label];
+		UILabel *label = (UILabel *)[container viewWithTag:SCALE_LABEL_TAG];
+		[self positionLabel:label aboveGesture:gestureRecognizer];
 		[self.view addSubview:container];
 	}
 	else if (state == UIGestureRecognizerStateChanged)
@@ -456,30 +553,32 @@
 		[self.transform scaleOffset:scaleDiff];
 		[self updateTransform];
 		
-		UILabel *label = (UILabel *)[self.view viewWithTag:TRANSFORM_LABEL_TAG];
+		UILabel *label = (UILabel *)[self.view viewWithTag:SCALE_LABEL_TAG];
 		[self setGesture:gestureRecognizer scaleforLabel:label];
 	}
 	else if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
 	{
-		[[self.view viewWithTag:TRANSFORM_CONTAINER_TAG] removeFromSuperview];
+		// hide tip when last gesture recognizer ends
+		[self decrementGestureCounter];
+		if ([self gestureCounter] <= 0)
+			[[self.view viewWithTag:TRANSFORM_CONTAINER_TAG] removeFromSuperview];
 	}
 	
-	lastPoint = currentPoint;
 	lastScale = currentScale;
 }
 
 - (void)handleRotation:(UIRotationGestureRecognizer *)gestureRecognizer
 {
 	CGFloat currentRotation = [gestureRecognizer rotation];
-	CGPoint currentPoint = [gestureRecognizer locationInView:self.view];
+	//CGPoint currentPoint = [gestureRecognizer locationInView:self.view];
 	UIGestureRecognizerState state = [gestureRecognizer state];
 	
 	if (state == UIGestureRecognizerStateBegan)
 	{
-		UILabel *label = [self makeLabel];
+		[self incrementGestureCounter];
 		UIView *container = [self makeContainer];
-		[container addSubview:label];
-		[self setGesture:gestureRecognizer rotationforLabel:label];
+		UILabel *label = (UILabel *)[container viewWithTag:ROTATE_LABEL_TAG];
+		[self positionLabel:label aboveGesture:gestureRecognizer];
 		[self.view addSubview:container];
 	}
 	else if (state == UIGestureRecognizerStateChanged)
@@ -488,16 +587,25 @@
 		[self.transform rotationOffset:rotationDiff];
 		[self updateTransform];
 		
-		UILabel *label = (UILabel *)[self.view viewWithTag:TRANSFORM_LABEL_TAG];
+		UILabel *label = (UILabel *)[self.view viewWithTag:ROTATE_LABEL_TAG];
 		[self setGesture:gestureRecognizer rotationforLabel:label];
 	}
 	else if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
 	{
-		[[self.view viewWithTag:TRANSFORM_CONTAINER_TAG] removeFromSuperview];
+		// hide tip when last gesture recognizer ends
+		[self decrementGestureCounter];
+		if ([self gestureCounter] <= 0)
+			[[self.view viewWithTag:TRANSFORM_CONTAINER_TAG] removeFromSuperview];
 	}
 	
-	lastPoint = currentPoint;
 	lastRotation = currentRotation;
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+	return YES;
 }
 
 #pragma mark - AnchorPointDelegate
