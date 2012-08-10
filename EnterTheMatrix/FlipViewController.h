@@ -28,8 +28,12 @@ typedef enum {
 
 @property (readonly, nonatomic) CGFloat durationMultiplier;
 @property (readonly, nonatomic) CGFloat skewMultiplier;
+@property (readonly, nonatomic) BOOL shouldAntiAliase;
+@property (readonly, nonatomic) BOOL shouldSetShadowPath;
 
 - (IBAction)skewValueChanged:(id)sender;
 - (IBAction)durationValueChanged:(id)sender;
+- (IBAction)antiAliaseValueChanged:(id)sender;
+- (IBAction)shadowPathValueChanged:(id)sender;
 
 @end

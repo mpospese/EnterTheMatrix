@@ -41,6 +41,8 @@
 @property (strong, nonatomic) CAGradientLayer *layerBackShadow;
 @property (strong, nonatomic) CALayer *layerFacingShadow;
 @property (strong, nonatomic) CALayer *layerRevealShadow;
+@property (assign, nonatomic) BOOL shouldAntiAliase;
+@property (assign, nonatomic) BOOL shouldSetShadowPath;
 
 @end
 
@@ -69,6 +71,8 @@
 @synthesize skewSlider;
 @synthesize skewLabel;
 @synthesize controlFrame;
+@synthesize shouldAntiAliase = _shouldAntiAliase;
+@synthesize shouldSetShadowPath = _shouldSetShadowPath;
 
 - (void)doInit
 {
@@ -76,6 +80,8 @@
 	orientation = FlipOrientationVertical;
 	_durationMultiplier = 1;
 	_skewMode = SkewModeNormal;
+	_shouldSetShadowPath = YES;
+	_shouldAntiAliase = YES;
 }
 
 - (id)init
@@ -689,7 +695,7 @@
 	CGFloat scale = [[UIScreen mainScreen] scale];
 	
 	// we inset the panels 1 point on each side with a transparent margin to antialiase the edges
-	UIEdgeInsets insets = vertical? UIEdgeInsetsMake(0, 1, 0, 1) : UIEdgeInsetsMake(1, 0, 1, 0);
+	UIEdgeInsets insets = [self shouldAntiAliase]? (vertical? UIEdgeInsetsMake(0, 1, 0, 1) : UIEdgeInsetsMake(1, 0, 1, 0)) : UIEdgeInsetsZero;
 	
 	CGRect upperRect = bounds;
 	if (vertical)
@@ -815,10 +821,12 @@
 	// set shadows on the 2 pages we'll be animating
 	//self.layerFront.shadowOpacity = 0.5;
 	self.layerFront.shadowOffset = CGSizeMake(0,3);
-	[self.layerFront setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.layerFront bounds], insets.left, insets.top)] CGPath]];	
+	if ([self shouldSetShadowPath])
+		[self.layerFront setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.layerFront bounds], insets.left, insets.top)] CGPath]];	
 	self.layerBack.shadowOpacity = 0.5;
 	self.layerBack.shadowOffset = CGSizeMake(0,3);
-	[self.layerBack setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.layerBack bounds], insets.left, insets.top)] CGPath]];
+	if ([self shouldSetShadowPath])
+		[self.layerBack setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.layerBack bounds], insets.left, insets.top)] CGPath]];
 }
 
  - (void)doFlip1:(CGFloat)progress
@@ -948,6 +956,25 @@
 			
 		default:
 			break;
+	}
+}
+
+- (IBAction)antiAliaseValueChanged:(id)sender {
+	[self setShouldAntiAliase:[sender isOn]];
+}
+
+- (IBAction)shadowPathValueChanged:(id)sender {
+	[self setShouldSetShadowPath:[sender isOn]];
+	
+	if ([self shouldSetShadowPath])
+	{
+		[self setShadowPathOnView:self.controlFrame];
+		[self.contentView.layer setShadowPath:[[UIBezierPath bezierPathWithRect:[self.contentView bounds]] CGPath]];
+	}
+	else
+	{
+		[self.controlFrame.layer setShadowPath:nil];
+		[self.contentView.layer setShadowPath:nil];
 	}
 }
 
