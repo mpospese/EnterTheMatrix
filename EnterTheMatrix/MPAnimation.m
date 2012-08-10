@@ -21,23 +21,23 @@
 // Pass in bounds to render the entire view, or another rect to render a subset of the view
 + (UIImage *)renderImageFromView:(UIView *)view withRect:(CGRect)frame
 {
-    // Create a new context of the desired size to render the image
+	// Create a new context of the desired size to render the image
 	UIGraphicsBeginImageContextWithOptions(frame.size, YES, 0);
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
 	// Translate it, to the desired position
 	CGContextTranslateCTM(context, -frame.origin.x, -frame.origin.y);
     
-    // Render the view as image
-    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+	// Render the view as image
+	[view.layer renderInContext:context];
     
-    // Fetch the image   
-    UIImage *renderedImage = UIGraphicsGetImageFromCurrentImageContext();
+	// Fetch the image   
+	UIImage *renderedImage = UIGraphicsGetImageFromCurrentImageContext();
     
-    // Cleanup
-    UIGraphicsEndImageContext();
-    
-    return renderedImage;
+	// Cleanup
+	UIGraphicsEndImageContext();
+	
+	return renderedImage;
 }
 
 // Generates an image from the view with transparent margins.
@@ -55,16 +55,16 @@
 	// Translate it, to the desired position
 	CGContextTranslateCTM(context, -frame.origin.x + insets.left, -frame.origin.y + insets.top);
     
-    // Render the view as image
-    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+	// Render the view as image
+	[view.layer renderInContext:context];
     
-    // Fetch the image   
-    UIImage *renderedImage = UIGraphicsGetImageFromCurrentImageContext();
+	// Fetch the image
+	UIImage *renderedImage = UIGraphicsGetImageFromCurrentImageContext();
     
-    // Cleanup
-    UIGraphicsEndImageContext();
+	// Cleanup
+	UIGraphicsEndImageContext();
     
-    return renderedImage;
+	return renderedImage;
 }
 
 // Generates a copy of the image with a 1 point transparent margin around it
