@@ -191,6 +191,7 @@
 			return -4.666667;
 			
 		case SkewModeNone:
+		case SkewModeSide:
 			return 0;
 			
 		case SkewModeLow:

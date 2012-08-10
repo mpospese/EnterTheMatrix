@@ -129,15 +129,33 @@
 	[self setTopBar:nil];
 	[self setCenterBar:nil];
 	[self setBottomBar:nil];
-    [self setSkewSegment:nil];
-    [self setControlFrame:nil];
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
+	[self setSkewSegment:nil];
+	[self setControlFrame:nil];
+	[super viewDidUnload];
+	// Release any retained subviews of the main view.
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	
+	// needed to keep view auto-sizing behavior from behaving badly with the optional side transform on contentView
+	UIView *superview = [self.contentView superview];
+	self.contentView.center = CGPointMake(roundf(CGRectGetMidX(superview.bounds)), roundf(CGRectGetMidY(superview.bounds)));
+	self.contentView.bounds = CGRectMake(0, 0, 500, 380);	
+}
+
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+	UIView *superview = [self.contentView superview];
+	// needed to keep view auto-sizing behavior from behaving badly with the optional side transform on contentView
+	self.contentView.center = CGPointMake(roundf(CGRectGetMidX(superview.bounds)), roundf(CGRectGetMidY(superview.bounds)));
+	self.contentView.bounds = CGRectMake(0, 0, 500, 380);
 }
 
 #pragma mark - Properties
@@ -155,6 +173,7 @@
 			return 1 / ((FOLD_HEIGHT / 2) *  4.666666667);
 			
 		case SkewModeNone:
+		case SkewModeSide:
 			return 0;
 			
 		case SkewModeLow:
@@ -242,9 +261,35 @@
 }
 
 - (IBAction)skewValueChanged:(UISegmentedControl *)sender {
-	CATransform3D transform = CATransform3DIdentity;	
-	transform.m34 = [self skew];
-	[[self perspectiveLayer] setSublayerTransform:transform];
+	BOOL wasSideView = !CATransform3DIsIdentity(self.contentView.layer.transform);
+	BOOL isSideView = self.skewMode == SkewModeSide;
+	
+	CATransform3D perspectiveTransform = CATransform3DIdentity;
+	CATransform3D contentTransform = CATransform3DIdentity;
+	
+	if (isSideView)
+	{
+		// Special transform so that we can view the fold from the side
+		perspectiveTransform.m34 = -0.0010;
+		perspectiveTransform = CATransform3DTranslate(perspectiveTransform, 30, -35, 0);
+		perspectiveTransform = CATransform3DRotate(perspectiveTransform, radians(60), .75, 1, -0.5);
+		contentTransform = perspectiveTransform;
+	}
+	else
+		perspectiveTransform.m34 = [self skew];		
+	
+	if (isSideView != wasSideView)
+	{
+		// animate the change in view point
+		CGFloat duration = DEFAULT_DURATION * [self durationMultiplier];
+		[UIView animateWithDuration:duration animations:^{
+			self.contentView.layer.transform = contentTransform;
+		}];
+	}
+	else
+		self.contentView.layer.transform = contentTransform;
+	
+	[[self perspectiveLayer] setSublayerTransform:perspectiveTransform];	
 }
 
 - (IBAction)durationValueChanged:(UISegmentedControl *)sender {
@@ -510,6 +555,10 @@
 	
 	// we inset the folding panels 1 point on each side with a transparent margin to antialiase the edges
 	UIEdgeInsets foldInsets = vertical? UIEdgeInsetsMake(0, 1, 0, 1) : UIEdgeInsetsMake(1, 0, 1, 0);
+	// insets on top/bottom are only needed if we're transforming the entire view (in which case these edges need
+	// anti-aliasing as well)
+	UIEdgeInsets topInsets = vertical? UIEdgeInsetsMake(2,2,0,2) : UIEdgeInsetsMake(2, 2, 2, 0);
+	UIEdgeInsets bottomInsets = vertical? UIEdgeInsetsMake(0, 2, 2, 2) : UIEdgeInsetsMake(2, 0, 2, 2);
 	
 	CGRect upperRect = bounds;
 	if (vertical)
@@ -526,14 +575,14 @@
 	[self.centerBar setHidden:NO];
 	UIImage * foldUpper = [MPAnimation renderImageFromView:self.centerBar withRect:upperRect transparentInsets:foldInsets];
 	UIImage * foldLower = [MPAnimation renderImageFromView:self.centerBar withRect:lowerRect transparentInsets:foldInsets];
-	UIImage *slideUpper = [MPAnimation renderImageFromView:self.topBar];
-	UIImage *slideLower = [MPAnimation renderImageFromView:self.bottomBar];
+	UIImage *slideUpper = [MPAnimation renderImageFromView:self.topBar withRect:self.topBar.bounds transparentInsets:topInsets];
+	UIImage *slideLower = [MPAnimation renderImageFromView:self.bottomBar withRect:self.bottomBar.bounds transparentInsets:bottomInsets];
 	
 	UIView *actingSource = self.contentView;
 	UIView *containerView = [actingSource superview];
 	[actingSource setHidden:YES];
 	
-	CATransform3D transform = CATransform3DIdentity;	
+	CATransform3D transform = self.contentView.layer.transform;
 	CALayer *upperFold;
 	CALayer *lowerFold;
 	
@@ -543,7 +592,9 @@
 	CGFloat lowerHeight = (height * 2) - upperHeight;
 
 	// view to hold all our sublayers
+	self.contentView.layer.transform = CATransform3DIdentity; // need to temporarily remove transform before calling convertRect
 	CGRect mainRect = [containerView convertRect:self.centerBar.frame fromView:actingSource];
+	self.contentView.layer.transform = transform; // put the transform back
 	self.animationView = [[UIView alloc] initWithFrame:mainRect];
 	self.animationView.backgroundColor = [UIColor clearColor];
 	[containerView addSubview:self.animationView];
@@ -629,9 +680,8 @@
 	[self setDropShadowForLayer:self.bottomSleeve];
 	
 	// reduce shadow on topSleeve slightly so it won't shade the upperFold panel so much
-	CGRect topBounds = self.topSleeve.bounds;
-	topBounds.size.height -= 3; // make it shorter by 3
-	[self.topSleeve setShadowPath:[[UIBezierPath bezierPathWithRect:topBounds] CGPath]];	
+	CGRect topBounds = CGRectMake(topInsets.left, topInsets.top, self.topSleeve.bounds.size.width - topInsets.left - topInsets.right, self.topSleeve.bounds.size.height - topInsets.top - topInsets.bottom - 3); // make it shorter by 3
+	[self.topSleeve setShadowPath:[[UIBezierPath bezierPathWithRect:topBounds] CGPath]];
 	
 	CGRect upperFoldBounds = CGRectInset([upperFold bounds], foldInsets.left, foldInsets.top);
 	upperFoldBounds.size.height -= 1;
@@ -641,7 +691,8 @@
 	lowerFoldBounds.size.height -= 1;
 	[lowerFold setShadowPath:[[UIBezierPath bezierPathWithRect:lowerFoldBounds] CGPath]];
 	
-	[self.bottomSleeve setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bottomSleeve bounds]] CGPath]];
+	CGRect bottomBounds = CGRectMake(bottomInsets.left, bottomInsets.top, self.bottomSleeve.bounds.size.width - bottomInsets.left - bottomInsets.right, self.bottomSleeve.bounds.size.height - bottomInsets.top - bottomInsets.bottom);
+	[self.bottomSleeve setShadowPath:[[UIBezierPath bezierPathWithRect:bottomBounds] CGPath]];
 	
 	// Perspective is best proportional to the height of the pieces being folded away, rather than a fixed value
 	// the larger the piece being folded, the more perspective distance (zDistance) is needed.

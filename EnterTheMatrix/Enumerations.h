@@ -33,7 +33,8 @@ typedef enum {
 	SkewModeNone,
 	SkewModeLow,
 	SkewModeNormal,
-	SkewModeHigh
+	SkewModeHigh,
+	SkewModeSide   // Not a real skew mode, but a change in view point
 } SkewMode;
 
 typedef enum {
