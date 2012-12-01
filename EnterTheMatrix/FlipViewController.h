@@ -18,22 +18,8 @@ typedef enum {
 	FlipDirectionBackward
 } FlipDirection;
 
-@interface FlipViewController : UIViewController<UIGestureRecognizerDelegate>
+@interface FlipViewController : UIViewController
 
-@property (weak, nonatomic) IBOutlet UIView *contentView;
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
-@property (weak, nonatomic) IBOutlet UISlider *skewSlider;
-@property (weak, nonatomic) IBOutlet UILabel *skewLabel;
-@property (weak, nonatomic) IBOutlet UIView *controlFrame;
 
-@property (readonly, nonatomic) CGFloat durationMultiplier;
-@property (readonly, nonatomic) CGFloat skewMultiplier;
-@property (readonly, nonatomic) BOOL shouldAntiAliase;
-@property (readonly, nonatomic) BOOL shouldSetShadowPath;
-
-- (IBAction)skewValueChanged:(id)sender;
-- (IBAction)durationValueChanged:(id)sender;
-- (IBAction)antiAliaseValueChanged:(id)sender;
-- (IBAction)shadowPathValueChanged:(id)sender;
 
 @end

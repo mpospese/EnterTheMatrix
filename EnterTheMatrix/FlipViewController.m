@@ -21,7 +21,11 @@
 #define SWIPE_LEFT_THRESHOLD -100.0f
 #define SWIPE_RIGHT_THRESHOLD 100.0f
 
-@interface FlipViewController ()
+@interface FlipViewController()<UIGestureRecognizerDelegate>
+
+@property (weak, nonatomic) IBOutlet UIView *contentView;
+@property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (weak, nonatomic) IBOutlet UIView *controlFrame;
 
 @property(assign, nonatomic) int currentImageIndex;
 @property(assign, nonatomic) FlipDirection direction;
@@ -144,8 +148,6 @@
 {
 	[self setContentView:nil];
 	[self setImageView:nil];
-	[self setSkewSlider:nil];
-	[self setSkewLabel:nil];
     [self setControlFrame:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
