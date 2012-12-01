@@ -13,6 +13,8 @@
 
 @interface BasicAnimationViewController ()
 
+@property (nonatomic, assign, getter = isRotating) BOOL rotating;
+
 @end
 
 @implementation BasicAnimationViewController
@@ -38,23 +40,17 @@
     return self;
 }
 
-- (void)addDropShadowToView:(UIView *)view
-{
-	view.layer.shadowOpacity = 0.5;
-	view.layer.shadowOffset = CGSizeMake(0, 3);
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
 	
 	self.controlFrame.layer.cornerRadius = 5;
-	[self addDropShadowToView:self.controlFrame];
+	[self addDropShadowToView:self.controlFrame withOffset:CGSizeMake(0, 3)];
 	[[self.controlFrame layer] setShadowPath:[[UIBezierPath bezierPathWithRoundedRect:[self.controlFrame bounds] cornerRadius:5] CGPath]];	
 
 	orientation = OrientationBottom;
-	[self addDropShadowToView:self.bar];
+	[self addDropShadowToView:self.bar withOffset:CGSizeZero];
 	[[self.bar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bar bounds]] CGPath]];	
 	
 	// Do any additional setup after loading the view.
@@ -76,10 +72,44 @@
     // Release any retained subviews of the main view.
 }
 
+- (void)viewWillLayoutSubviews
+{
+	[super viewWillLayoutSubviews];
+		
+	// during rotation we'll get a separate callback and animate the change in shadowPath
+	if (![self isRotating])
+		[self setShadowPathWithAnimationDuration:0];
+}
+
+#pragma mark - Autorotation
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return YES;
 }
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+	[super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+	
+	[self setRotating:YES];
+}
+
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+	[super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+	
+	[self setShadowPathWithAnimationDuration:duration];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+	[super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+	
+	[self setRotating:NO];
+}
+
+#pragma mark - Properties
 
 - (BOOL)isFast
 {
@@ -105,6 +135,8 @@
 {
 	return (AnimationMode)[[self modeSegment] selectedSegmentIndex];
 }
+
+#pragma mark - IBActions
 
 - (IBAction)goPressed:(id)sender {
 	
@@ -154,18 +186,7 @@
 				// Because shadowPath is not an animatable property,
 				// we have to create our own animation for it, but this is
 				// pretty straight-forward
-				CGPathRef oldPath = CGPathRetain([[self.bar layer] shadowPath]);
-				[[self.bar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bar bounds]] CGPath]];
-				
-				CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"shadowPath"];
-				[pathAnimation setFromValue:(__bridge id)oldPath];
-				[pathAnimation setToValue:(id)[[self.bar layer] shadowPath]];
-				[pathAnimation setDuration:[self isFast]? 0.5 : 2.5];
-				[pathAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-				[pathAnimation setRemovedOnCompletion:YES];
-				
-				[[self.bar layer] addAnimation:pathAnimation forKey:@"shadowPath"];
-				CGPathRelease(oldPath);
+                [self setShadowPathWithAnimationDuration:[self isFast]? 0.5 : 2.5];
 			}
 				break;
 				
@@ -224,7 +245,7 @@
 						 
 						  self.bar.transform = CGAffineTransformIdentity;
 						  self.bar.frame = newFrame;
-						  [[self.bar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bar bounds]] CGPath]];	
+						  [self setShadowPathWithAnimationDuration:0];
 						  self.orientation = newOrientation;
 						  self.bar.autoresizingMask = newResizing;
 					 }
@@ -243,4 +264,35 @@
 	scaleLabel.textColor = isTransform? [UIColor darkTextColor] : [UIColor lightGrayColor];
 	rotateLabel.textColor = isTransform? [UIColor darkTextColor] : [UIColor lightGrayColor];
 }
+
+#pragma mark - Shadows paths
+
+- (void)addDropShadowToView:(UIView *)view withOffset:(CGSize)offset
+{
+	view.layer.shadowOpacity = 0.5;
+	view.layer.shadowOffset = offset;
+}
+
+// Shadow paths don't animate along with our UIViews, so we have to do this manually
+- (void)setShadowPathWithAnimationDuration:(NSTimeInterval)duration
+{
+	UIBezierPath *newPath = [UIBezierPath bezierPathWithRect:self.bar.bounds];
+	CGPathRef oldPath = CGPathRetain([self.bar.layer shadowPath]);
+	[self.bar.layer setShadowPath:[newPath CGPath]];
+	
+	if (duration > 0)
+	{
+		CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"shadowPath"];
+		[pathAnimation setFromValue:(__bridge id)oldPath];
+		[pathAnimation setToValue:(id)[self.bar.layer shadowPath]];
+		[pathAnimation setDuration:duration];
+		[pathAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+		[pathAnimation setRemovedOnCompletion:YES];
+		
+		[self.bar.layer addAnimation:pathAnimation forKey:@"shadowPath"];
+	}
+	
+	CGPathRelease(oldPath);
+}
+
 @end
