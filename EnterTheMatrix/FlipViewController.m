@@ -559,7 +559,7 @@
 		if (shadowProgress > 1)
 			shadowProgress = 1;
 		
-		[arrayOpacity addObject:[NSNumber numberWithFloat:0.5 * shadowProgress]];
+		[arrayOpacity addObject:[NSNumber numberWithFloat:0.25 * shadowProgress]];
 	}
 	
 	CAKeyframeAnimation *keyAnimation = [CAKeyframeAnimation animationWithKeyPath:@"shadowOpacity"];
@@ -660,7 +660,7 @@
 		if (shadowProgress > 1)
 			shadowProgress = 1;
 		
-		[arrayOpacity addObject:[NSNumber numberWithFloat:0.5 * shadowProgress]];
+		[arrayOpacity addObject:[NSNumber numberWithFloat:0.25 * shadowProgress]];
 	}
 	
 	CAKeyframeAnimation *keyAnimation = [CAKeyframeAnimation animationWithKeyPath:@"shadowOpacity"];
@@ -820,11 +820,11 @@
 	self.animationView.layer.sublayerTransform = transform;
 	
 	// set shadows on the 2 pages we'll be animating
-	//self.layerFront.shadowOpacity = 0.5;
+	//self.layerFront.shadowOpacity = 0.25;
 	self.layerFront.shadowOffset = CGSizeMake(0,3);
 	if ([self shouldSetShadowPath])
 		[self.layerFront setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.layerFront bounds], insets.left, insets.top)] CGPath]];	
-	self.layerBack.shadowOpacity = 0.5;
+	self.layerBack.shadowOpacity = 0.25;
 	self.layerBack.shadowOffset = CGSizeMake(0,3);
 	if ([self shouldSetShadowPath])
 		[self.layerBack setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectInset([self.layerBack bounds], insets.left, insets.top)] CGPath]];
@@ -849,7 +849,7 @@
 	CGFloat shadowProgress = progress * 8;
 	if (shadowProgress > 1)
 		shadowProgress = 1;
-	[self.layerFront setShadowOpacity:0.5 * shadowProgress];
+	[self.layerFront setShadowOpacity:0.25 * shadowProgress];
 
 	[CATransaction commit];
 }
@@ -873,7 +873,7 @@
 	CGFloat shadowProgress = (1 - progress) * 8;
 	if (shadowProgress > 1)
 		shadowProgress = 1;
-	[self.layerBack setShadowOpacity:0.5 * shadowProgress];
+	[self.layerBack setShadowOpacity:0.25 * shadowProgress];
 
 	[CATransaction commit];
 }
