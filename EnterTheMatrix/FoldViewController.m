@@ -43,6 +43,11 @@
 @property (readonly, nonatomic) SkewMode skewMode;
 @property (readonly, nonatomic) BOOL isInverse;
 
+@property (strong, nonatomic) UIImage *slideUpperImage;
+@property (strong, nonatomic) UIImage *foldUpperImage;
+@property (strong, nonatomic) UIImage *foldLowerImage;
+@property (strong, nonatomic) UIImage *slideLowerImage;
+
 @end
 
 @implementation FoldViewController
@@ -113,13 +118,9 @@
 	// Set drop shadows and shadow paths on views
 	self.controlFrame.layer.cornerRadius = 5;
 	[self setDropShadow:self.controlFrame];
-	[[self.controlFrame layer] setShadowPath:[[UIBezierPath bezierPathWithRoundedRect:[self.controlFrame bounds] cornerRadius:5] CGPath]];	
-	[self setDropShadow:self.topBar];
-	[self setDropShadow:self.centerBar];
-	[self setDropShadow:self.bottomBar];
-	[[self.topBar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.topBar bounds]] CGPath]];	
-	[[self.centerBar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.centerBar bounds]] CGPath]];	
-	[[self.bottomBar layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.bottomBar bounds]] CGPath]];	
+	[[self.controlFrame layer] setShadowPath:[[UIBezierPath bezierPathWithRoundedRect:[self.controlFrame bounds] cornerRadius:5] CGPath]];
+	[self setDropShadow:self.contentView];
+	[[self.contentView layer] setShadowPath:[[UIBezierPath bezierPathWithRect:[self.contentView bounds]] CGPath]];
 	
 	// Add our tap gesture recognizer
 	UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
@@ -130,6 +131,19 @@
 	UIPinchGestureRecognizer *pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
 	pinchGesture.delegate = self;
 	[self.view addGestureRecognizer:pinchGesture];
+    
+    // render some images
+    UIEdgeInsets insets = UIEdgeInsetsMake(10, 10, 10, 10);
+    UIImage *entire = [MPAnimation renderImageFromView:self.contentView withInsets:insets];
+    
+    CGFloat yOffset = 0;
+	self.slideUpperImage = [MPAnimation renderImage:entire withRect:CGRectMake(0, yOffset, entire.size.width, self.topBar.bounds.size.height + insets.top)];
+    yOffset += self.slideUpperImage.size.height;
+    self.foldUpperImage = [MPAnimation renderImage:entire withRect:CGRectMake(0, yOffset, entire.size.width, self.centerBar.bounds.size.height/2)];
+    yOffset += self.foldUpperImage.size.height;
+    self.foldLowerImage = [MPAnimation renderImage:entire withRect:CGRectMake(0, yOffset, entire.size.width, self.centerBar.bounds.size.height/2)];
+    yOffset += self.foldLowerImage.size.height;
+	self.slideLowerImage = [MPAnimation renderImage:entire withRect:CGRectMake(0, yOffset, entire.size.width, self.bottomBar.bounds.size.height + insets.bottom)];
 }
 
 - (void)viewDidUnload
@@ -438,12 +452,14 @@
 		self.topBar.transform = CGAffineTransformMakeTranslation(0, FOLD_HEIGHT/2);
 		self.bottomBar.transform = CGAffineTransformMakeTranslation(0, -FOLD_HEIGHT/2);
 		[self.centerBar setHidden:YES];
+        self.contentView.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, FOLD_HEIGHT / 2, self.contentView.bounds.size.width, self.contentView.bounds.size.height - FOLD_HEIGHT)].CGPath;
 	}
 	else 
 	{
 		self.topBar.transform = CGAffineTransformIdentity;
 		self.bottomBar.transform = CGAffineTransformIdentity;
 		[self.centerBar setHidden:NO];
+        self.contentView.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.contentView.bounds].CGPath;
 	}
 	[self.contentView setHidden:NO];	
 }
@@ -563,11 +579,9 @@
 	CGFloat scale = [[UIScreen mainScreen] scale];
 	
 	// we inset the folding panels 1 point on each side with a transparent margin to antialiase the edges
-	UIEdgeInsets foldInsets = vertical? UIEdgeInsetsMake(0, 1, 0, 1) : UIEdgeInsetsMake(1, 0, 1, 0);
+	UIEdgeInsets foldInsets = vertical? UIEdgeInsetsMake(0, 10, 0, 10) : UIEdgeInsetsMake(10, 0, 10, 0);
 	// insets on top/bottom are only needed if we're transforming the entire view (in which case these edges need
 	// anti-aliasing as well)
-	UIEdgeInsets topInsets = vertical? UIEdgeInsetsMake(2,2,0,2) : UIEdgeInsetsMake(2, 2, 2, 0);
-	UIEdgeInsets bottomInsets = vertical? UIEdgeInsetsMake(0, 2, 2, 2) : UIEdgeInsetsMake(2, 0, 2, 2);
 	
 	CGRect upperRect = bounds;
 	if (vertical)
@@ -580,12 +594,7 @@
 	else
 		lowerRect.origin.x += upperRect.size.width;
 		
-	// Create 4 images to represent 2 halves of the 2 views
 	[self.centerBar setHidden:NO];
-	UIImage * foldUpper = [MPAnimation renderImageFromView:self.centerBar withRect:upperRect transparentInsets:foldInsets];
-	UIImage * foldLower = [MPAnimation renderImageFromView:self.centerBar withRect:lowerRect transparentInsets:foldInsets];
-	UIImage *slideUpper = [MPAnimation renderImageFromView:self.topBar withRect:self.topBar.bounds transparentInsets:topInsets];
-	UIImage *slideLower = [MPAnimation renderImageFromView:self.bottomBar withRect:self.bottomBar.bounds transparentInsets:bottomInsets];
 	
 	UIView *actingSource = self.contentView;
 	UIView *containerView = [actingSource superview];
@@ -622,18 +631,18 @@
 	// This remains flat, and is the upper half of the destination view when moving forwards
 	// It slides down to meet the bottom sleeve in the center
 	self.topSleeve = [CALayer layer];
-	self.topSleeve.frame = (CGRect){CGPointZero, slideUpper.size};
+	self.topSleeve.frame = (CGRect){CGPointZero, self.slideUpperImage.size};
 	self.topSleeve.anchorPoint = CGPointMake(vertical? 0.5 : 1, vertical? 1 : 0.5);
 	self.topSleeve.position = CGPointMake(vertical? width/2 : 0, vertical? 0 : width/2);
-	[self.topSleeve setContents:(id)[slideUpper CGImage]];
+	[self.topSleeve setContents:(id)[self.slideUpperImage CGImage]];
 	[self.firstJointLayer addSublayer:self.topSleeve];
 	
 	// This piece folds away from user along top edge, and is the upper half of the source view when moving forwards
 	upperFold = [CALayer layer];
-	upperFold.frame = (CGRect){CGPointZero, foldUpper.size};
+	upperFold.frame = (CGRect){CGPointZero, self.foldUpperImage.size};
 	upperFold.anchorPoint = CGPointMake(vertical? 0.5 : 0, vertical? 0 : 0.5);
 	upperFold.position = CGPointMake(vertical? width/2 : 0, vertical? 0 : width / 2);
-	upperFold.contents = (id)[foldUpper CGImage];
+	upperFold.contents = (id)[self.foldUpperImage CGImage];
 	[self.firstJointLayer addSublayer:upperFold];
 	
 	// layer that encapsultates the join between the upper and lower folding panels (the V in the fold)
@@ -646,19 +655,19 @@
 	
 	// This piece folds away from user along bottom edge, and is the lower half of the source view when moving forwards
 	lowerFold = [CALayer layer];
-	lowerFold.frame = (CGRect){CGPointZero, foldLower.size};
+	lowerFold.frame = (CGRect){CGPointZero, self.foldLowerImage.size};
 	lowerFold.anchorPoint = CGPointMake(vertical? 0.5 : 0, vertical? 0 : 0.5);
 	lowerFold.position = CGPointMake(vertical? width/2 : 0, vertical? 0 : width / 2);
-	lowerFold.contents = (id)[foldLower CGImage];
+	lowerFold.contents = (id)[self.foldLowerImage CGImage];
 	[self.secondJointLayer addSublayer:lowerFold];
 	
 	// This remains flat, and is the lower half of the destination view when moving forwards
 	// It slides up to meet the top sleeve in the center
 	self.bottomSleeve = [CALayer layer];
-	self.bottomSleeve.frame = (CGRect){CGPointZero, slideLower.size};
+	self.bottomSleeve.frame = (CGRect){CGPointZero, self.slideLowerImage.size};
 	self.bottomSleeve.anchorPoint = CGPointMake(vertical? 0.5 : 0, vertical? 0 : 0.5);
 	self.bottomSleeve.position = CGPointMake(vertical? width/2 : lowerHeight, vertical? lowerHeight : width / 2);
-	[self.bottomSleeve setContents:(id)[slideLower CGImage]];
+	[self.bottomSleeve setContents:(id)[self.slideLowerImage CGImage]];
 	[self.secondJointLayer addSublayer:self.bottomSleeve];
 	
 	self.firstJointLayer.anchorPoint = CGPointMake(vertical? 0.5 : 0, vertical? 0 : 0.5);
@@ -683,13 +692,13 @@
 	self.lowerFoldShadow.endPoint = CGPointMake(vertical? 0.5 : 1, vertical? 1 : 0.5);
 	self.lowerFoldShadow.opacity = 0;
 		
-	[self setDropShadowForLayer:self.topSleeve];
-	[self setDropShadowForLayer:upperFold];
-	[self setDropShadowForLayer:lowerFold];
-	[self setDropShadowForLayer:self.bottomSleeve];
+	//[self setDropShadowForLayer:self.topSleeve];
+	//[self setDropShadowForLayer:upperFold];
+	//[self setDropShadowForLayer:lowerFold];
+	//[self setDropShadowForLayer:self.bottomSleeve];
 	
 	// reduce shadow on topSleeve slightly so it won't shade the upperFold panel so much
-	CGRect topBounds = CGRectMake(topInsets.left, topInsets.top, self.topSleeve.bounds.size.width - topInsets.left - topInsets.right, self.topSleeve.bounds.size.height - topInsets.top - topInsets.bottom - 3); // make it shorter by 3
+	/*CGRect topBounds = CGRectMake(topInsets.left, topInsets.top, self.topSleeve.bounds.size.width - topInsets.left - topInsets.right, self.topSleeve.bounds.size.height - topInsets.top - topInsets.bottom - 3); // make it shorter by 3
 	[self.topSleeve setShadowPath:[[UIBezierPath bezierPathWithRect:topBounds] CGPath]];
 	
 	CGRect upperFoldBounds = CGRectInset([upperFold bounds], foldInsets.left, foldInsets.top);
@@ -701,7 +710,7 @@
 	[lowerFold setShadowPath:[[UIBezierPath bezierPathWithRect:lowerFoldBounds] CGPath]];
 	
 	CGRect bottomBounds = CGRectMake(bottomInsets.left, bottomInsets.top, self.bottomSleeve.bounds.size.width - bottomInsets.left - bottomInsets.right, self.bottomSleeve.bounds.size.height - bottomInsets.top - bottomInsets.bottom);
-	[self.bottomSleeve setShadowPath:[[UIBezierPath bezierPathWithRect:bottomBounds] CGPath]];
+	[self.bottomSleeve setShadowPath:[[UIBezierPath bezierPathWithRect:bottomBounds] CGPath]];*/
 	
 	// Perspective is best proportional to the height of the pieces being folded away, rather than a fixed value
 	// the larger the piece being folded, the more perspective distance (zDistance) is needed.

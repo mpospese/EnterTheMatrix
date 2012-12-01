@@ -114,4 +114,48 @@
 	return renderedImage;
 }
 
+// Generates an image from the view with transparent margins.
+// (UIEdgeInsets)insets defines the size of the transparent margins to create
++ (UIImage *)renderImageFromView:(UIView *)view withInsets:(UIEdgeInsets)insets
+{
+	CGSize imageSizeWithBorder = CGSizeMake(view.bounds.size.width + insets.left + insets.right, view.bounds.size.height + insets.top + insets.bottom);
+    // Create a new context of the desired size to render the image
+	UIGraphicsBeginImageContextWithOptions(imageSizeWithBorder, UIEdgeInsetsEqualToEdgeInsets(insets, UIEdgeInsetsZero), 0);
+	CGContextRef context = UIGraphicsGetCurrentContext();
+	
+	// Translate it, to the desired position
+	CGContextTranslateCTM(context, insets.left, insets.top);
+    
+	[view.layer renderInContext:context];
+    
+	// Fetch the image
+	UIImage *renderedImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+	// Cleanup
+	UIGraphicsEndImageContext();
+    
+	return renderedImage;
+}
+
++ (UIImage *)renderImage:(UIImage *)image withRect:(CGRect)frame
+{
+	// Create a new context of the desired size to render the image
+	UIGraphicsBeginImageContextWithOptions(frame.size, NO, 0);
+	CGContextRef context = UIGraphicsGetCurrentContext();
+	
+	// Translate it, to the desired position
+	CGContextTranslateCTM(context, -frame.origin.x, -frame.origin.y);
+    
+	// Render the view as image
+	[image drawInRect:(CGRect){CGPointZero, [image size]}];
+    
+	// Fetch the image
+	UIImage *renderedImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+	// Cleanup
+	UIGraphicsEndImageContext();
+	
+	return renderedImage;
+}
+
 @end

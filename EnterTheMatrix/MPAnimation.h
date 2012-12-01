@@ -17,4 +17,7 @@
 + (UIImage *)renderImageForAntialiasing:(UIImage *)image;
 + (UIImage *)renderImage:(UIImage *)image withMargin:(CGFloat)width color:(UIColor *)color;
 
++ (UIImage *)renderImageFromView:(UIView *)view withInsets:(UIEdgeInsets)insets;
++ (UIImage *)renderImage:(UIImage *)image withRect:(CGRect)frame;
+
 @end
