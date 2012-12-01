@@ -48,36 +48,10 @@
 
 @implementation FlipViewController
 
-@synthesize currentImageIndex;
-@synthesize direction;
-@synthesize orientation;
-@synthesize flipFrontPage;
-@synthesize animating;
-@synthesize panning;
-@synthesize panStart;
-@synthesize durationMultiplier = _durationMultiplier;
-@synthesize skewMode = _skewMode;
-@synthesize animationView = _animationView;
-@synthesize layerFront = _layerFront;
-@synthesize layerFacing = _layerFacing;
-@synthesize layerBack = _layerBack;
-@synthesize layerReveal = _layerReveal;
-@synthesize layerFrontShadow = _layerFrontShadow;
-@synthesize layerBackShadow = _layerBackShadow;
-@synthesize layerFacingShadow = _layerFacingShadow;
-@synthesize layerRevealShadow = _layerRevealShadow;
-@synthesize contentView;
-@synthesize imageView;
-@synthesize skewSlider;
-@synthesize skewLabel;
-@synthesize controlFrame;
-@synthesize shouldAntiAliase = _shouldAntiAliase;
-@synthesize shouldSetShadowPath = _shouldSetShadowPath;
-
 - (void)doInit
 {
-	direction = FlipDirectionForward;
-	orientation = FlipOrientationVertical;
+	_direction = FlipDirectionForward;
+	_orientation = FlipOrientationVertical;
 	_durationMultiplier = 1;
 	_skewMode = SkewModeNormal;
 	_shouldSetShadowPath = YES;
@@ -258,10 +232,10 @@
 	// Determine where we are in our page turn animation
 	// 0 - 1 means flipping the front-side of the page
 	// 1 - 2 means flipping the back-side of the page
-	BOOL isForward = (direction == FlipDirectionForward);
-	BOOL isVertical = (orientation == FlipOrientationVertical);
+	BOOL isForward = (self.direction == FlipDirectionForward);
+	BOOL isVertical = (self.orientation == FlipOrientationVertical);
 	
-	CGFloat difference = isVertical? position.y - panStart.y : position.x - panStart.x;
+	CGFloat difference = isVertical? position.y - self.panStart.y : position.x - self.panStart.x;
 	CGFloat halfWidth = (isVertical? self.contentView.frame.size.height / 2 : self.contentView.frame.size.width / 2);
 	CGFloat progress = difference / halfWidth * (isForward? - 1 : 1);
 	if (progress < 0)
@@ -327,7 +301,7 @@
 		
 		[self setAnimating:YES];
 		[self setPanning:YES];
-		panStart = currentPosition;
+		self.panStart = currentPosition;
 	}
 	
 	if ([self isPanning] && state == UIGestureRecognizerStateChanged)
@@ -356,17 +330,17 @@
 			BOOL shouldFallBack = [self isFlipFrontPage];
 			
 			// But, if user was swiping in an appropriate direction, go ahead and honor that
-			if (orientation == FlipOrientationHorizontal)
+			if (self.orientation == FlipOrientationHorizontal)
 			{
 				if (vel.x < SWIPE_LEFT_THRESHOLD)
 				{
 					// Detected a swipe to the left
-					shouldFallBack = direction != FlipDirectionForward;
+					shouldFallBack = self.direction != FlipDirectionForward;
 				}
 				else if (vel.x > SWIPE_RIGHT_THRESHOLD)
 				{
 					// Detected a swipe to the right
-					shouldFallBack = direction == FlipDirectionForward;
+					shouldFallBack = self.direction == FlipDirectionForward;
 				}				
 			}
 			else
@@ -374,12 +348,12 @@
 				if (vel.y < SWIPE_UP_THRESHOLD)
 				{
 					// Detected a swipe up
-					shouldFallBack = direction != FlipDirectionForward;
+					shouldFallBack = self.direction != FlipDirectionForward;
 				}
 				else if (vel.y > SWIPE_DOWN_THRESHOLD)
 				{
 					// Detected a swipe down
-					shouldFallBack = direction == FlipDirectionForward;
+					shouldFallBack = self.direction == FlipDirectionForward;
 				}
 			}
 			
@@ -675,8 +649,8 @@
 
 - (void)startFlipWithDirection:(FlipDirection)aDirection orientation:(FlipOrientation)anOrientation
 {
-	direction = aDirection;
-	orientation = anOrientation;
+	self.direction = aDirection;
+	self.orientation = anOrientation;
 	[self setFlipFrontPage:YES];
 	
 	[self buildLayers:aDirection orientation:anOrientation];
@@ -883,8 +857,8 @@
 	CATransform3D tHalf1 = CATransform3DIdentity;
 
 	// rotate away from viewer
-	BOOL isForward = (direction == FlipDirectionForward);
-	BOOL isVertical = (orientation == FlipOrientationVertical);
+	BOOL isForward = (self.direction == FlipDirectionForward);
+	BOOL isVertical = (self.orientation == FlipOrientationVertical);
 	tHalf1 = CATransform3DRotate(tHalf1, radians(ANGLE * progress * (isForward? -1 : 1)), isVertical? -1 : 0, isVertical? 0 : 1, 0);
 	
 	return tHalf1;
@@ -895,8 +869,8 @@
 	CATransform3D tHalf2 = CATransform3DIdentity;
 
 	// rotate away from viewer
-	BOOL isForward = (direction == FlipDirectionForward);
-	BOOL isVertical = (orientation == FlipOrientationVertical);
+	BOOL isForward = (self.direction == FlipDirectionForward);
+	BOOL isVertical = (self.orientation == FlipOrientationVertical);
 	tHalf2 = CATransform3DRotate(tHalf2, radians(ANGLE * (1 - progress)) * (isForward? 1 : -1), isVertical? -1 : 0, isVertical? 0 : 1, 0);
 
 	return tHalf2;
@@ -918,7 +892,7 @@
 	
 	if (completed)
 	{
-		if (direction == FlipDirectionForward)
+		if (self.direction == FlipDirectionForward)
 			[self setCurrentImageIndex:([self currentImageIndex] + 1) % IMAGE_COUNT];
 		else
 			[self setCurrentImageIndex:([self currentImageIndex] + IMAGE_COUNT - 1) % IMAGE_COUNT];
