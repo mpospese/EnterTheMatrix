@@ -52,29 +52,6 @@
 
 @implementation FoldViewController
 
-@synthesize folded;
-@synthesize folding;
-@synthesize pinchStartGap;
-@synthesize lastProgress;
-
-@synthesize animationView = _animationView;
-@synthesize perspectiveLayer = _perspectiveLayer;
-@synthesize topSleeve = _topSleeve;
-@synthesize bottomSleeve = _bottomSleeve;
-@synthesize upperFoldShadow = _upperFoldShadow;
-@synthesize lowerFoldShadow = _lowerFoldShadow;
-@synthesize firstJointLayer = _firstJointLayer;
-@synthesize secondJointLayer = _secondJointLayer;
-@synthesize animationCenter = _animationCenter;
-
-@synthesize contentView;
-@synthesize topBar;
-@synthesize centerBar;
-@synthesize bottomBar;
-@synthesize skewSegment;
-@synthesize controlFrame;
-@synthesize durationMultiplier = _durationMultiplier;
-
 - (void)doInit
 {
 	_durationMultiplier = 1;
