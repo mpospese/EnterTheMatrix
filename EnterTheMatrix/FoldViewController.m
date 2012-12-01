@@ -14,7 +14,16 @@
 #define DEFAULT_DURATION 0.3
 #define FOLD_SHADOW_OPACITY 0.25
 
-@interface FoldViewController ()
+@interface FoldViewController()<UIGestureRecognizerDelegate>
+
+@property (weak, nonatomic) IBOutlet UIView *contentView;
+@property (weak, nonatomic) IBOutlet UIView *topBar;
+@property (weak, nonatomic) IBOutlet UIView *centerBar;
+@property (weak, nonatomic) IBOutlet UIView *bottomBar;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *skewSegment;
+@property (weak, nonatomic) IBOutlet UIView *controlFrame;
+
+@property (readonly) CGFloat skew;
 
 @property (assign, nonatomic, getter = isFolded) BOOL folded;
 @property (assign, nonatomic, getter = isFolding) BOOL folding;

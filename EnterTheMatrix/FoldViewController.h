@@ -8,20 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FoldViewController : UIViewController<UIGestureRecognizerDelegate>
-
-@property (weak, nonatomic) IBOutlet UIView *contentView;
-@property (weak, nonatomic) IBOutlet UIView *topBar;
-@property (weak, nonatomic) IBOutlet UIView *centerBar;
-@property (weak, nonatomic) IBOutlet UIView *bottomBar;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *skewSegment;
-@property (weak, nonatomic) IBOutlet UIView *controlFrame;
-
-@property (readonly) CGFloat skew;
-@property (readonly, nonatomic) CGFloat durationMultiplier;
-
-- (void)handlePinch:(UIGestureRecognizer *)gestureRecognizer;
-- (IBAction)skewValueChanged:(UISegmentedControl *)sender;
-- (IBAction)durationValueChanged:(UISegmentedControl *)sender;
+@interface FoldViewController : UIViewController
 
 @end
