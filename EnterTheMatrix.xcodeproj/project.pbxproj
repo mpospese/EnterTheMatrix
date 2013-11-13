@@ -101,6 +101,7 @@
 		4D63B8C5150B6F8600FA4482 /* matrix_04.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = matrix_04.png; sourceTree = "<group>"; };
 		4D63B8CA150B71A400FA4482 /* MPAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAnimation.h; sourceTree = "<group>"; };
 		4D63B8CB150B71A400FA4482 /* MPAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPAnimation.m; sourceTree = "<group>"; };
+		4D69507B1833CDB000C8BA1E /* LICENSE.TXT */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.TXT; sourceTree = "<group>"; };
 		4D6E91C31511041300B7D1D1 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		4D6E91C61511042D00B7D1D1 /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
 		4D6E91C81511049200B7D1D1 /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@2x.png"; sourceTree = "<group>"; };
@@ -186,6 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				4D886B7A1568F3DC00F9A5CF /* README.md */,
+				4D69507B1833CDB000C8BA1E /* LICENSE.TXT */,
 				4D886B731568F27000F9A5CF /* Glyphish license.txt */,
 				4D6E91C81511049200B7D1D1 /* Icon-72@2x.png */,
 				4D6E91C31511041300B7D1D1 /* Icon-72.png */,
